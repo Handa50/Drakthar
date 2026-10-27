@@ -31,7 +31,7 @@ function norm(s){return s.toLocaleLowerCase('es').normalize('NFD').replace(/[\\u
 function tokenize(s){return s.match(/[¿¡]?[^\\s]+/gu)||[]}
 function translate(text,reverse=false){
  return tokenize(text).map(token=>{
-  const m=token.match(/^([¿¡]?)([\\p{L}]+(?:[-'][\\p{L}]+)?)([?!.,;:]*)$/u);
+  const m=token.match(/^([¿¡]?)([\p{L}]+(?:[-'][\p{L}]+)?)([?!.,;:]*)$/u);
   if(!m)return token;
   const [,prefix,word,punc]=m; const key=norm(word);
   let val;
