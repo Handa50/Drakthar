@@ -41,9 +41,27 @@ textarea, input {
   border-radius: 8px;
   padding: 10px;
 }
+.dragon {
+  font-size: 100px;
+  text-align: center;
+  filter: drop-shadow(0 0 18px #ff0000);
+  animation: dragonGlow 2s infinite alternate;
+}
+
+@keyframes dragonGlow {
+  from {
+    filter: drop-shadow(0 0 10px #8b0000);
+  }
+  to {
+    filter: drop-shadow(0 0 30px #ff0000);
+  }
+}
 </style></head><body>
 <header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>🐉 DRAKTHAR 🐉</h1>
 <p class="subtitle">EL IDIOMA DE LOS DRAGONES</p>
+<div class="dragon">
+  🐉
+</div>
 <p>El idioma antiguo de una civilización perdida. Traduce frases, busca palabras, escucha la pronunciación y aprende con retos.</p></header>
 <nav><a href="#traductor">Traductor</a><a href="#diccionario">Diccionario</a><a href="#alfabeto">Alfabeto rúnico</a><a href="#reto">Reto</a></nav>
 <main>
