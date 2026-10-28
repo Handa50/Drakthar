@@ -127,6 +127,27 @@ transition: transform 0.2s, box-shadow 0.2s;
 transform: translateY(-2px);
 box-shadow: 0 0 12px #c99b3b88;
 }
+#dictionary > * {
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#dictionary li {
+list-style: none;
+margin: 10px 0;
+padding: 12px 16px;
+border: 1px solid #8f2633;
+border-left: 4px solid #c99b3b;
+border-radius: 10px;
+background: rgba(12, 9, 14, 0.9);
+color: #f5e6c8;
+transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+#dictionary li:hover {
+border-color: #e8b65a;
+box-shadow: 0 0 14px #c99b3b55;
+transform: translateY(-2px);
+}
 </style></head><body>
 <header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>🐉 DRAKTHAR 🐉</h1>
 <p class="subtitle">EL IDIOMA DE LOS DRAGONES</p>
