@@ -296,18 +296,79 @@ const dict={"yo": "Ar", "tú": "Tar", "tu": "Tar", "él": "Uth", "ella": "Uth", 
 const runes={"A": "ᚨ", "B": "ᛒ", "C": "ᚲ", "D": "ᛞ", "E": "ᛖ", "F": "ᚠ", "G": "ᚷ", "H": "ᚺ", "I": "ᛁ", "J": "ᛃ", "K": "ᚲ", "L": "ᛚ", "M": "ᛗ", "N": "ᚾ", "O": "ᛟ", "P": "ᛈ", "Q": "ᛩ", "R": "ᚱ", "S": "ᛊ", "T": "ᛏ", "U": "ᚢ", "V": "ᚡ", "W": "ᚹ", "X": "ᛪ", "Y": "ᛦ", "Z": "ᛉ"};
 function norm(s){return s.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function tokenize(s){return s.match(/[¿¡]?[^\s]+/gu)||[]}
-function translate(text,reverse=false){
- return tokenize(text).map(token=>{
-  const m=token.match(/^([¿¡]?)([\p{L}]+(?:[-'][\p{L}]+)?)([?!.,;:]*)$/u);
-  if(!m)return token;
-  const [,prefix,word,punc]=m; const key=norm(word);
-  let val;
-  if(reverse){val=Object.keys(dict).find(k=>norm(dict[k])===key); if(!val)return token; val=val;}
-  else {val=dict[key]; if(!val)return token;}
-  if(prefix==='¿'&&!reverse) val+='-ei';
-  return prefix+val+punc;
- }).join(' ');
+```js
+function translate(text, reverse=false){
+  const words = tokenize(text);
+  const result = [];
+  const verbForms = {
+    ver: 'Varek', veo: 'Varek', ves: 'Varek', ve: 'Varek',
+    vi: 'Varekak', viste: 'Varekak', vio: 'Varekak',
+    vimos: 'Varekak', visteis: 'Varekak', vieron: 'Varekak',
+    vere: 'Varekur', veré: 'Varekur', veras: 'Varekur',
+    verás: 'Varekur', vera: 'Varekur', verá: 'Varekur',
+    veremos: 'Varekur', vereis: 'Varekur', veréis: 'Varekur',
+    veran: 'Varekur', verán: 'Varekur'
+  };
+
+  for(const token of words){
+    const m = token.match(/^([¿¡]?)([\p{L}]+(?:[-'][\p{L}]+)?)([?!.,;:]*)$/u);
+    if(!m){
+      result.push(token);
+      continue;
+    }
+
+    const [, prefix, word, punc] = m;
+    const key = norm(word);
+    let val;
+
+    if(!reverse){
+      if(key === 'nok'){
+        val = 'Nok';
+      } else if(verbForms[key]){
+        val = verbForms[key];
+      } else {
+        val = dict[key];
+      }
+
+      if(!val){
+        result.push(token);
+        continue;
+      }
+
+      if(prefix === '¿') result.push('Ka');
+      result.push(val + punc);
+    } else {
+      if(key === 'ka'){
+        result.push('¿');
+        continue;
+      }
+      if(key === 'nok'){
+        result.push('no');
+        continue;
+      }
+      if(key === 'varekak'){
+        result.push('vi' + punc);
+        continue;
+      }
+      if(key === 'varekur'){
+        result.push('veré' + punc);
+        continue;
+      }
+
+      val = Object.keys(dict).find(k => norm(dict[k]) === key);
+      if(!val){
+        result.push(token);
+        continue;
+      }
+      result.push(val + punc);
+    }
+  }
+
+  return result.join(' ').replace(/¿\s+/g, '¿');
 }
+```
+
+
 function doTranslate(reverse=false){const raw=document.getElementById('input').value.trim();const out=document.getElementById('output');if(!raw){out.textContent='Escribe una frase para empezar.';return;}out.textContent=translate(raw,reverse);document.getElementById('status').textContent='Traducción experimental: las palabras desconocidas se mantienen sin cambios.';}
 document.getElementById('toDrak').onclick=()=>doTranslate(false);document.getElementById('toEs').onclick=()=>doTranslate(true);
 document.getElementById('clear').onclick=()=>{document.getElementById('input').value='';document.getElementById('output').textContent='Tu traducción aparecerá aquí…';document.getElementById('status').textContent='';};
