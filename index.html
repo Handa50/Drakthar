@@ -237,7 +237,44 @@ text-shadow: 0 0 6px #8f263355;
 color: #f5e6c8;
 margin-top: 6px;
 }
-</style></head><body>
+/* GRAMÁTICA DE DRAKTHAR */
+#gramatica {
+  margin-top: 35px;
+}
+
+#gramatica h2 {
+  color: #e8b65a;
+  text-align: center;
+  text-shadow: 0 0 8px #8f2633;
+}
+
+#gramatica .panel {
+  background: linear-gradient(
+    145deg,
+    rgba(65, 20, 28, 0.96),
+    rgba(12, 9, 14, 0.98)
+  );
+  border: 2px solid #c99b3b;
+  border-radius: 14px;
+  padding: 20px;
+  color: #f5e6c8;
+  box-shadow: 0 0 18px #8f263355;
+}
+
+#gramatica h3 {
+  color: #e8b65a;
+  border-bottom: 1px solid #c99b3b;
+  padding-bottom: 6px;
+  margin-top: 22px;
+}
+
+#gramatica p {
+  line-height: 1.6;
+}
+
+#gramatica strong {
+  color: #ffd980;
+}</style></head><body>
 <header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>🐉 DRAKTHAR 🐉</h1>
 <p class="subtitle">EL IDIOMA DE LOS DRAGONES</p>
 <div class="dragon">
@@ -317,4 +354,26 @@ function playMagicSound() {
 document.getElementById('toDrak').addEventListener('click', playMagicSound);
 document.getElementById('toEs').addEventListener('click', playMagicSound);
 document.getElementById('clear').addEventListener('click', playMagicSound);
-</script></body></html>
+</script><section id="gramatica">
+  <h2>📜 Gramática de Drakthar</h2>
+
+  <div class="panel">
+    <h3>🐉 1. Orden de las palabras</h3>
+    <p>En Drakthar usamos el orden Sujeto + Verbo + Complemento.</p>
+    <p><strong>Ejemplo:</strong> Ar vek Mora.</p>
+    <p><em>Significado provisional:</em> Yo veo la casa.</p>
+
+    <h3>⚔️ 2. Pronombres personales</h3>
+    <p><strong>Ar</strong> = yo</p>
+    <p><strong>Tar</strong> = tú</p>
+    <p><strong>Uth</strong> = él / ella</p>
+    <p><strong>Arak</strong> = nosotros / nosotras</p>
+    <p><strong>Uthar</strong> = ellos / ellas</p>
+
+    <h3>🔥 3. Plural</h3>
+    <p>Por ahora, algunas palabras pueden representar tanto el singular como el plural.</p>
+
+    <h3>✨ 4. Palabras desconocidas</h3>
+    <p>El traductor conserva las palabras que todavía no están en el diccionario.</p>
+  </div>
+</section></body></html>
