@@ -296,7 +296,7 @@ const dict={"yo": "Ar", "tú": "Tar", "tu": "Tar", "él": "Uth", "ella": "Uth", 
 const runes={"A": "ᚨ", "B": "ᛒ", "C": "ᚲ", "D": "ᛞ", "E": "ᛖ", "F": "ᚠ", "G": "ᚷ", "H": "ᚺ", "I": "ᛁ", "J": "ᛃ", "K": "ᚲ", "L": "ᛚ", "M": "ᛗ", "N": "ᚾ", "O": "ᛟ", "P": "ᛈ", "Q": "ᛩ", "R": "ᚱ", "S": "ᛊ", "T": "ᛏ", "U": "ᚢ", "V": "ᚡ", "W": "ᚹ", "X": "ᛪ", "Y": "ᛦ", "Z": "ᛉ"};
 function norm(s){return s.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function tokenize(s){return s.match(/[¿¡]?[^\s]+/gu)||[]}
-```js
+  
 function translate(text, reverse=false){
   const words = tokenize(text);
   const result = [];
