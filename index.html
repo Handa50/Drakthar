@@ -6,7 +6,24 @@
 header{text-align:center;padding:40px 16px 26px;border-bottom:1px solid var(--line)}.rune{color:var(--gold);letter-spacing:.5em}h1{color:var(--gold);font-size:clamp(2.4rem,8vw,4.1rem);margin:12px 0;letter-spacing:.08em}header p{max-width:700px;margin:auto;line-height:1.6;color:var(--muted)}
 nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:14px;background:#151811;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--line)}nav a{color:var(--gold);text-decoration:none;padding:8px 11px;border:1px solid var(--line);border-radius:20px}
 main{max-width:1000px;margin:auto;padding:20px 16px 50px}.panel{background:linear-gradient(145deg,#25291f,#191c16);border:1px solid #45432f;border-radius:14px;padding:18px;margin:14px 0}
-label{display:block;color:var(--gold);font-size:1.1rem;margin-bottom:10px}textarea,input{width:100%;padding:13px;border:1px solid #615638;border-radius:9px;background:#12150f;color:var(--text);font:1rem Arial,sans-serif}textarea{min-height:110px;resize:vertical}
+label{display:block;color:var(--gold);font-size:1.1rem;margin-bottom:10px}textarea,input {
+width: 100%;
+padding: 16px;
+border: 2px solid #8f2633;
+border-radius: 12px;
+color: #f5e6c8;
+background: rgba(10, 8, 12, 0.92);
+font-size: 16px;
+box-shadow: inset 0 0 15px #00000080;
+transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+textarea:focus, input:focus {
+outline: none;
+border-color: #e8b65a;
+box-shadow: 0 0 15px #e8b65a55;
+}
+}textarea{min-height:110px;resize:vertical}
 button{border:1px solid #e4c77e;background:var(--gold);color:#19190f;font-weight:bold;padding:11px 15px;border-radius:8px;cursor:pointer;font-size:.98rem;margin:8px 6px 0 0}button.secondary,.example{background:#25291f;color:var(--text);border-color:#615638}
 .result{min-height:60px;padding:15px;background:#12150f;border:1px dashed #74613a;border-radius:9px;font-size:1.3rem;overflow-wrap:anywhere}.small{font: .93rem/1.6 Arial,sans-serif;color:var(--muted)}h2{color:var(--gold);margin-top:30px}.examples{display:flex;gap:8px;flex-wrap:wrap}.example{border:1px solid #45432f;border-radius:20px;padding:8px 12px;cursor:pointer}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}.wordcard{background:#1b1e17;border:1px solid #45432f;border-radius:9px;padding:12px}.dw{color:var(--gold);font-weight:bold;font-size:1.1rem}.dm{margin-top:4px}.count{color:var(--muted);font: .9rem Arial,sans-serif;margin-top:8px}
