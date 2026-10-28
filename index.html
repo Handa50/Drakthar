@@ -366,7 +366,7 @@ function translate(text, reverse=false){
 
   return result.join(' ').replace(/¿\s+/g, '¿');
 }
-```
+
 
 
 function doTranslate(reverse=false){const raw=document.getElementById('input').value.trim();const out=document.getElementById('output');if(!raw){out.textContent='Escribe una frase para empezar.';return;}out.textContent=translate(raw,reverse);document.getElementById('status').textContent='Traducción experimental: las palabras desconocidas se mantienen sin cambios.';}
