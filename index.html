@@ -288,29 +288,30 @@ let qi=0;function showQuiz(){const q=quizzes[qi];document.getElementById('quizQu
 showQuiz();document.getElementById('nextQuiz').onclick=()=>{qi=(qi+1)%quizzes.length;showQuiz();};
 document.getElementById('input').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')doTranslate(false);});
 function playMagicSound() {
-try {
-const audio = new (window.AudioContext || window.webkitAudioContext)();
-const oscillator = audio.createOscillator();
-const gain = audio.createGain();
+  try {
+    const audio = new (window.AudioContext || window.webkitAudioContext)();
 
-```
-oscillator.type = 'sine';
-oscillator.frequency.setValueAtTime(660, audio.currentTime);
-oscillator.frequency.exponentialRampToValueAtTime(990, audio.currentTime + 0.12);
+    audio.resume().then(() => {
+      const oscillator = audio.createOscillator();
+      const gain = audio.createGain();
 
-gain.gain.setValueAtTime(0.12, audio.currentTime);
-gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.2);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(660, audio.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(990, audio.currentTime + 0.12);
 
-oscillator.connect(gain);
-gain.connect(audio.destination);
-oscillator.start();
-oscillator.stop(audio.currentTime + 0.2);
-oscillator.onended = () => audio.close();
-```
+      gain.gain.setValueAtTime(0.12, audio.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.2);
 
-} catch (error) {
-console.log('El sonido no está disponible en este navegador.');
-}
+      oscillator.connect(gain);
+      gain.connect(audio.destination);
+
+      oscillator.start();
+      oscillator.stop(audio.currentTime + 0.2);
+      oscillator.onended = () => audio.close();
+    });
+  } catch (error) {
+    console.log('El sonido no está disponible en este navegador.');
+  }
 }
 
 document.getElementById('toDrak').addEventListener('click', playMagicSound);
