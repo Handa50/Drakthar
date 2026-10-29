@@ -668,4 +668,122 @@ document.getElementById('clear').addEventListener('click', playMagicSound);
 })();
 </script>
 
+<section id="jefe-drakthar" style="max-width:650px;margin:30px auto;padding:24px;background:#16080d;color:#f5e6c8;border:2px solid #c99b3b;border-radius:16px;text-align:center;">
+  <h2 style="color:#ff5555;">🐉 JEFE FINAL: DRAVOK</h2>
+  <p>¡El Dragón Rojo desafía tu conocimiento de Drakthar!</p>
+  <div style="font-size:60px;">🐲🔥</div>
+  <p>❤️ Vida del dragón: <strong id="vida-dravok">100</strong>%</p>
+  <div style="height:18px;background:#333;border-radius:10px;overflow:hidden;">
+    <div id="barra-dravok" style="height:100%;width:100%;background:#d71935;transition:width .3s;"></div>
+  </div>
+  <p id="mensaje-dravok">Pulsa para comenzar el combate.</p>
+  <button id="iniciar-dravok" type="button" style="padding:12px 20px;background:#8b1e2d;color:white;border:1px solid #c99b3b;border-radius:10px;cursor:pointer;">⚔️ ¡Luchar!</button>
+  <div id="reto-dravok" hidden>
+    <h3 id="pregunta-dravok"></h3>
+    <div id="opciones-dravok" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;"></div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const retos = [
+    {es:"hola", dr:"Tharek"},
+    {es:"dragón", dr:"Dravok"},
+    {es:"casa", dr:"Mora"},
+    {es:"fuego", dr:"Kragh"},
+    {es:"agua", dr:"Nara"},
+    {es:"rey", dr:"Tharok"},
+    {es:"bruja", dr:"Varkira"},
+    {es:"espada", dr:"Krazor"}
+  ];
+
+  let vida = 100;
+  let indice = 0;
+  let activo = false;
+
+  const vidaTexto = document.getElementById("vida-dravok");
+  const barra = document.getElementById("barra-dravok");
+  const mensaje = document.getElementById("mensaje-dravok");
+  const reto = document.getElementById("reto-dravok");
+  const pregunta = document.getElementById("pregunta-dravok");
+  const opciones = document.getElementById("opciones-dravok");
+  const botonInicio = document.getElementById("iniciar-dravok");
+
+  function mezclar(lista) {
+    return lista.slice().sort(() => Math.random() - 0.5);
+  }
+
+  function mostrarReto() {
+    if (vida <= 0) {
+      mensaje.textContent = "🏆 ¡HAS DERROTADO A DRAVOK! ¡Eres una leyenda de Drakthar!";
+      reto.hidden = true;
+      botonInicio.hidden = false;
+      botonInicio.textContent = "🔄 Volver a luchar";
+      activo = false;
+      return;
+    }
+
+    const actual = retos[indice % retos.length];
+    pregunta.textContent = "¿Cómo se dice «" + actual.es + "» en Drakthar?";
+    opciones.replaceChildren();
+
+    const respuestas = mezclar([
+      actual.dr,
+      ...mezclar(retos.filter(r => r.dr !== actual.dr).map(r => r.dr)).slice(0, 3)
+    ]);
+
+    respuestas.forEach(respuesta => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = respuesta;
+      b.style.cssText = "padding:12px 8px;background:#25151d;color:#f5e6c8;border:1px solid #c99b3b;border-radius:10px;cursor:pointer;overflow-wrap:anywhere;";
+      b.addEventListener("click", () => {
+        if (!activo) return;
+        activo = false;
+        opciones.querySelectorAll("button").forEach(x => x.disabled = true);
+
+        if (respuesta === actual.dr) {
+          vida = Math.max(0, vida - 20);
+          mensaje.textContent = "💥 ¡Golpe directo! Dravok pierde 20 puntos de vida.";
+        } else {
+          mensaje.textContent = "🔥 ¡Dravok resiste! La respuesta correcta era " + actual.dr + ".";
+        }
+
+        vidaTexto.textContent = vida;
+        barra.style.width = vida + "%";
+        indice++;
+
+        if (vida === 0) {
+          mostrarReto();
+        } else {
+          const continuar = document.createElement("button");
+          continuar.type = "button";
+          continuar.textContent = "➡️ Continuar combate";
+          continuar.style.cssText = "grid-column:1/-1;padding:12px;background:#8b1e2d;color:white;border:1px solid #c99b3b;border-radius:10px;cursor:pointer;";
+          continuar.addEventListener("click", () => {
+            continuar.remove();
+            activo = true;
+            mostrarReto();
+          });
+          opciones.appendChild(continuar);
+        }
+      });
+      opciones.appendChild(b);
+    });
+  }
+
+  botonInicio.addEventListener("click", () => {
+    vida = 100;
+    indice = 0;
+    activo = true;
+    vidaTexto.textContent = vida;
+    barra.style.width = "100%";
+    mensaje.textContent = "⚔️ ¡El combate ha comenzado!";
+    botonInicio.hidden = true;
+    reto.hidden = false;
+    mostrarReto();
+  });
+})();
+</script>
+
 </body></html>
