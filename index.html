@@ -300,74 +300,146 @@ function norm(s){return s.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0
 function tokenize(s){return s.match(/[¿¡]?[^\s]+/gu)||[]}
   
 function translate(text, reverse=false){
-  const words = tokenize(text);
-  const result = [];
-  const verbForms = {
-    ver: 'Varek', veo: 'Varek', ves: 'Varek', ve: 'Varek',
-    vi: 'Varekak', viste: 'Varekak', vio: 'Varekak',
-    vimos: 'Varekak', visteis: 'Varekak', vieron: 'Varekak',
-    vere: 'Varekur', veré: 'Varekur', veras: 'Varekur',
-    verás: 'Varekur', vera: 'Varekur', verá: 'Varekur',
-    veremos: 'Varekur', vereis: 'Varekur', veréis: 'Varekur',
-    veran: 'Varekur', verán: 'Varekur'
-  };
+const words = tokenize(text);
+const result = [];
 
-  for(const token of words){
-    const m = token.match(/^([¿¡]?)([\p{L}]+(?:[-'][\p{L}]+)?)([?!.,;:]*)$/u);
-    if(!m){
-      result.push(token);
-      continue;
-    }
+const verbRoots = {
+'ver': 'Varek',
+'hablar': 'Thalan',
+'mirar': 'Varek',
+'venir': 'Kador',
+'ir': 'Zarth',
+'correr': 'Zakar',
+'esperar': 'Dhor',
+'querer': 'Mave',
+'tener': 'Thur',
+'hacer': 'Darak',
+'jugar': 'Kavor',
+'comer': 'Nakar',
+'beber': 'Othar',
+'dormir': 'Murum',
+'pensar': 'Karem',
+'saber': 'Veth',
+'escuchar': 'Thorin',
+'callar': 'Dumak'
+};
 
-    const [, prefix, word, punc] = m;
-    const key = norm(word);
-    let val;
+const verbForms = {
+'veo': 'Varek',
+'ves': 'Varek',
+'ve': 'Varek',
+'vi': 'Varekak',
+'viste': 'Varekak',
+'vio': 'Varekak',
+'vimos': 'Varekak',
+'visteis': 'Varekak',
+'vieron': 'Varekak',
+'vere': 'Varekur',
+'veré': 'Varekur',
+'veras': 'Varekur',
+'verás': 'Varekur',
+'vera': 'Varekur',
+'verá': 'Varekur',
+'veremos': 'Varekur',
+'vereis': 'Varekur',
+'veréis': 'Varekur',
+'veran': 'Varekur',
+'verán': 'Varekur'
+};
 
-    if(!reverse){
-      if(key === 'nok'){
-        val = 'Nok';
-      } else if(verbForms[key]){
-        val = verbForms[key];
-      } else {
-        val = dict[key];
-      }
+const reverseForms = {
+'varekak': 'vi',
+'varekur': 'veré',
+'thalanak': 'hablé',
+'thalanur': 'hablaré',
+'kadorak': 'vine',
+'kadorur': 'vendré',
+'zarthak': 'fui',
+'zarthur': 'iré',
+'zakarak': 'corrí',
+'zakarur': 'correré',
+'dhorak': 'esperé',
+'dhorur': 'esperaré',
+'maveak': 'quise',
+'maveur': 'querré',
+'thurak': 'tuve',
+'thurur': 'tendré',
+'darakak': 'hice',
+'darakur': 'haré',
+'kavorak': 'jugué',
+'kavorur': 'jugaré',
+'nakarak': 'comí',
+'nakarur': 'comeré',
+'otharak': 'bebí',
+'otharur': 'beberé',
+'murumak': 'dormí',
+'murumur': 'dormiré',
+'karem ak': 'pensé',
+'karemur': 'pensaré',
+'vethak': 'supe',
+'vethur': 'sabré',
+'thorinak': 'escuché',
+'thorinur': 'escucharé',
+'dumakak': 'callé',
+'dumakur': 'callaré'
+};
 
-      if(!val){
-        result.push(token);
-        continue;
-      }
+for(const token of words){
+const m = token.match(/^([¿¡]?)([\p{L}]+(?:[-'][\p{L}]+)?)([?!.,;:]*)$/u);
+if(!m){
+result.push(token);
+continue;
+}
 
-      if(prefix === '¿') result.push('Ka');
-      result.push(val + punc);
-    } else {
-      if(key === 'ka'){
-        result.push('¿');
-        continue;
-      }
-      if(key === 'nok'){
-        result.push('no');
-        continue;
-      }
-      if(key === 'varekak'){
-        result.push('vi' + punc);
-        continue;
-      }
-      if(key === 'varekur'){
-        result.push('veré' + punc);
-        continue;
-      }
+const [, prefix, word, punc] = m;
+const key = norm(word);
+let val;
 
-      val = Object.keys(dict).find(k => norm(dict[k]) === key);
-      if(!val){
-        result.push(token);
-        continue;
-      }
-      result.push(val + punc);
-    }
+if(!reverse){
+  if(key === 'nok'){
+    val = 'Nok';
+  } else if(verbForms[key]){
+    val = verbForms[key];
+  } else if(dict[key]){
+    val = dict[key];
+  } else if(verbRoots[key]){
+    val = verbRoots[key];
+  } else {
+    result.push(token);
+    continue;
   }
 
-  return result.join(' ').replace(/¿\s+/g, '¿');
+  if(prefix === '¿') result.push('Ka');
+  result.push(val + punc);
+} else {
+  if(key === 'ka'){
+    result.push('¿');
+    continue;
+  }
+  if(key === 'nok'){
+    result.push('no');
+    continue;
+  }
+
+  if(reverseForms[key]){
+    result.push(reverseForms[key] + punc);
+    continue;
+  }
+
+  val = Object.keys(dict).find(k => norm(dict[k]) === key);
+  if(!val){
+    result.push(token);
+    continue;
+  }
+  result.push(val + punc);
 }
+```
+
+}
+
+return result.join(' ').replace(/¿\s+/g, '¿');
+}
+
 
 
 
