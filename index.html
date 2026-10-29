@@ -539,4 +539,133 @@ document.getElementById('clear').addEventListener('click', playMagicSound);
 
   </div>
 </section>
+<section id="juego-drakthar" style="max-width:650px;margin:30px auto;padding:24px;background:#100b12;color:#f5e6c8;border:2px solid #c99b3b;border-radius:16px;text-align:center;">
+  <h2 style="color:#e8b94e;">🐉 El desafío de Drakthar</h2>
+  <p>¡Acierta las traducciones y conviértete en una leyenda!</p>
+
+  <div id="juego-inicio">
+    <p>Responde 10 preguntas. Cada acierto vale 1 punto.</p>
+    <button id="juego-empezar" type="button" style="padding:12px 20px;background:#8b1e2d;color:white;border:1px solid #c99b3b;border-radius:10px;cursor:pointer;">⚔️ Empezar partida</button>
+  </div>
+
+  <div id="juego-pregunta" hidden>
+    <p id="juego-progreso"></p>
+    <h3 id="juego-palabra"></h3>
+    <div id="juego-opciones" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;"></div>
+    <p id="juego-mensaje" aria-live="polite"></p>
+    <p id="juego-puntos">Puntos: 0</p>
+    <button id="juego-siguiente" type="button" hidden style="padding:10px 16px;background:#8b1e2d;color:white;border:1px solid #c99b3b;border-radius:10px;cursor:pointer;">Siguiente ➜</button>
+  </div>
+
+  <div id="juego-final" hidden>
+    <h3>🏆 ¡Partida terminada!</h3>
+    <p id="juego-resultado"></p>
+    <button id="juego-repetir" type="button" style="padding:12px 20px;background:#8b1e2d;color:white;border:1px solid #c99b3b;border-radius:10px;cursor:pointer;">🔄 Jugar otra vez</button>
+  </div>
+</section>
+
+<script>
+(function () {
+  const preguntas = [
+    ["hola", "Tharek"], ["dragón", "Dravok"],
+    ["bruja", "Varkira"], ["mago", "Thazarek"],
+    ["casa", "Mora"], ["fuego", "Kragh"],
+    ["agua", "Nara"], ["rey", "Tharok"],
+    ["reina", "Tharika"], ["espada", "Krazor"],
+    ["escudo", "Drovak"], ["familia", "Mareth"],
+    ["amigo", "Daran"], ["luna", "Mira"],
+    ["sol", "Auron"], ["magia", "Thazur"],
+    ["perro", "Nickrack"], ["gato", "Mekrath"],
+    ["libro", "Tavar"], ["escuela", "Drak"],
+    ["monstruo", "Kharvok"], ["portal", "Uldrav"],
+    ["poción", "Nivareth"], ["fantasma", "Ulmora"],
+    ["castillo", "Mordrak"], ["aventura", "Tharvok"],
+    ["oro", "Azharek"], ["plata", "Nivorak"],
+    ["batalla", "Kharvath"], ["esperanza", "Lumarath"]
+  ];
+
+  const inicio = document.getElementById("juego-inicio");
+  const pregunta = document.getElementById("juego-pregunta");
+  const final = document.getElementById("juego-final");
+  const palabra = document.getElementById("juego-palabra");
+  const opciones = document.getElementById("juego-opciones");
+  const mensaje = document.getElementById("juego-mensaje");
+  const progreso = document.getElementById("juego-progreso");
+  const puntosTexto = document.getElementById("juego-puntos");
+  const siguiente = document.getElementById("juego-siguiente");
+  let ronda = 0, puntos = 0, partida = [];
+
+  function mezclar(lista) {
+    return lista.slice().sort(() => Math.random() - 0.5);
+  }
+
+  function empezar() {
+    partida = mezclar(preguntas).slice(0, 10);
+    ronda = 0;
+    puntos = 0;
+    inicio.hidden = true;
+    final.hidden = true;
+    pregunta.hidden = false;
+    mostrarPregunta();
+  }
+
+  function mostrarPregunta() {
+    const actual = partida[ronda];
+    progreso.textContent = "Pregunta " + (ronda + 1) + " de 10";
+    palabra.textContent = "¿Cómo se dice «" + actual[0] + "» en Drakthar?";
+    mensaje.textContent = "";
+    puntosTexto.textContent = "Puntos: " + puntos;
+    siguiente.hidden = true;
+    opciones.replaceChildren();
+
+    const respuestas = mezclar([
+      actual[1],
+      ...mezclar(preguntas.filter(p => p[1] !== actual[1]).map(p => p[1])).slice(0, 3)
+    ]);
+
+    respuestas.forEach(respuesta => {
+      const boton = document.createElement("button");
+      boton.type = "button";
+      boton.textContent = respuesta;
+      boton.style.cssText = "padding:12px 8px;background:#25151d;color:#f5e6c8;border:1px solid #c99b3b;border-radius:10px;cursor:pointer;overflow-wrap:anywhere;";
+      boton.addEventListener("click", () => responder(boton, respuesta, actual[1]));
+      opciones.appendChild(boton);
+    });
+  }
+
+  function responder(boton, respuesta, correcta) {
+    if (siguiente.hidden === false) return;
+    opciones.querySelectorAll("button").forEach(b => b.disabled = true);
+
+    if (respuesta === correcta) {
+      puntos++;
+      mensaje.textContent = "✅ ¡Correcto! +1 punto";
+    } else {
+      mensaje.textContent = "❌ La respuesta era: " + correcta;
+    }
+
+    puntosTexto.textContent = "Puntos: " + puntos;
+    siguiente.hidden = false;
+    siguiente.textContent = ronda === 9 ? "Ver resultado 🏆" : "Siguiente ➜";
+  }
+
+  function terminar() {
+    pregunta.hidden = true;
+    final.hidden = false;
+    let titulo = puntos === 10 ? "🐉 ¡Dragón legendario!" :
+      puntos >= 8 ? "👑 Maestro de Drakthar" :
+      puntos >= 4 ? "⚔️ Guerrero" : "📜 Aprendiz";
+    document.getElementById("juego-resultado").textContent =
+      "Has conseguido " + puntos + " de 10 puntos. " + titulo;
+  }
+
+  document.getElementById("juego-empezar").addEventListener("click", empezar);
+  document.getElementById("juego-repetir").addEventListener("click", empezar);
+  siguiente.addEventListener("click", () => {
+    if (ronda === 9) terminar();
+    else { ronda++; mostrarPregunta(); }
+  });
+})();
+</script>
+
 </body></html>
