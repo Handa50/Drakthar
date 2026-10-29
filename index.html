@@ -786,4 +786,107 @@ document.getElementById('clear').addEventListener('click', playMagicSound);
 })();
 </script>
 
+<!-- MAPA DEL MUNDO DE DRAKTHAR -->
+<section id="mapa-drakthar" style="max-width:900px;margin:40px auto;padding:25px;background:#100b12;color:#f5e6c8;border:2px solid #c99b3b;border-radius:18px;text-align:center;font-family:Arial,sans-serif;">
+
+  <h2 style="color:#e8b94e;font-size:30px;">🗺️ El mundo de Drakthar</h2>
+  <p>Explora las tierras antiguas y demuestra que eres digno del poder del dragón.</p>
+
+  <div id="zonas-drakthar" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-top:25px;">
+
+    <div style="padding:18px;background:#18251a;border:1px solid #70a66b;border-radius:12px;">
+      <div style="font-size:40px;">🌲</div>
+      <h3>Bosque de Vareth</h3>
+      <p>El comienzo de tu aventura.</p>
+      <button data-zona="0" type="button">🌿 Explorar</button>
+    </div>
+
+    <div style="padding:18px;background:#29140e;border:1px solid #c75c32;border-radius:12px;">
+      <div style="font-size:40px;">🌋</div>
+      <h3>Volcán de Kraghor</h3>
+      <p>Una tierra de fuego y pruebas.</p>
+      <button data-zona="1" type="button">🔒 Bloqueado</button>
+    </div>
+
+    <div style="padding:18px;background:#17172c;border:1px solid #7777cc;border-radius:12px;">
+      <div style="font-size:40px;">🏰</div>
+      <h3>Reino de Nivarak</h3>
+      <p>Un reino lleno de misterios.</p>
+      <button data-zona="2" type="button">🔒 Bloqueado</button>
+    </div>
+
+    <div style="padding:18px;background:#291020;border:1px solid #bd5d9a;border-radius:12px;">
+      <div style="font-size:40px;">⚔️</div>
+      <h3>Castillo de Mordrak</h3>
+      <p>Prepárate para una gran batalla.</p>
+      <button data-zona="3" type="button">🔒 Bloqueado</button>
+    </div>
+
+    <div style="padding:18px;background:#270c0c;border:1px solid #e04444;border-radius:12px;">
+      <div style="font-size:40px;">🐉</div>
+      <h3>Guarida de Dravok</h3>
+      <p>El desafío definitivo.</p>
+      <button data-zona="4" type="button">🔒 Bloqueado</button>
+    </div>
+
+  </div>
+
+  <div id="mensaje-mapa-drakthar" role="status" style="margin-top:25px;padding:15px;background:#080609;border-radius:10px;">
+    🌲 ¡Tu aventura comienza en el Bosque de Vareth!
+  </div>
+</section>
+
+<script>
+(function () {
+  const mapa = document.getElementById("mapa-drakthar");
+  if (!mapa || mapa.dataset.iniciado === "si") return;
+  mapa.dataset.iniciado = "si";
+
+  const botones = mapa.querySelectorAll("button[data-zona]");
+  const mensaje = document.getElementById("mensaje-mapa-drakthar");
+  const nombres = [
+    "Bosque de Vareth",
+    "Volcán de Kraghor",
+    "Reino de Nivarak",
+    "Castillo de Mordrak",
+    "Guarida de Dravok"
+  ];
+  const iconos = ["🌲", "🌋", "🏰", "⚔️", "🐉"];
+  let desbloqueada = 0;
+
+  botones.forEach(function (boton, indice) {
+    boton.style.background = "linear-gradient(135deg,#6f1724,#a52a2a)";
+    boton.style.color = "#ffe6a6";
+    boton.style.border = "1px solid #c99b3b";
+    boton.style.borderRadius = "8px";
+    boton.style.padding = "10px 14px";
+    boton.style.cursor = "pointer";
+    boton.style.fontWeight = "bold";
+
+    boton.addEventListener("click", function () {
+      if (indice > desbloqueada) {
+        mensaje.textContent = "🔒 Primero debes completar las zonas anteriores.";
+        return;
+      }
+
+      if (indice === desbloqueada && indice < 4) {
+        desbloqueada++;
+        botones[desbloqueada].textContent = "✨ Zona desbloqueada";
+        mensaje.textContent = "🎉 ¡Has desbloqueado " + nombres[desbloqueada] + "!";
+      } else if (indice === 4) {
+        mensaje.textContent = "🐉 ¡Has llegado a la Guarida de Dravok! Prepárate para el desafío final.";
+      } else {
+        mensaje.textContent = iconos[indice] + " Estás explorando " + nombres[indice] + ". ¡Sigue avanzando!";
+      }
+
+      botones.forEach(function (b, i) {
+        if (i <= desbloqueada) {
+          b.textContent = i === desbloqueada ? "✨ Explorar zona" : "✅ Zona disponible";
+        }
+      });
+    });
+  });
+})();
+</script>
+  
 </body></html>
