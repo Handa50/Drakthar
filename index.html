@@ -889,4 +889,586 @@ document.getElementById('clear').addEventListener('click', playMagicSound);
 })();
 </script>
   
+<!-- ================================== -->
+<!-- RPG: LAS CRÓNICAS DE DRAKTHAR      -->
+<!-- ================================== -->
+
+<section id="rpg-drakthar" style="
+max-width:950px;
+margin:40px auto;
+padding:24px;
+background:#100910;
+color:#f5e6c8;
+border:2px solid #c99b3b;
+border-radius:18px;
+font-family:Arial,sans-serif;
+">
+
+<style>
+#rpg-drakthar *{box-sizing:border-box}
+#rpg-drakthar h2,#rpg-drakthar h3{color:#e8b94e}
+#rpg-drakthar .rpg-panel{
+  background:#1b101b;
+  border:1px solid #70452c;
+  border-radius:12px;
+  padding:16px;
+  margin:14px 0;
+}
+#rpg-drakthar .rpg-button{
+  background:linear-gradient(135deg,#6f1724,#a52a2a);
+  color:#ffe6a6;
+  border:1px solid #c99b3b;
+  border-radius:9px;
+  padding:11px 15px;
+  margin:5px;
+  cursor:pointer;
+  font-weight:bold;
+}
+#rpg-drakthar .rpg-button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+#rpg-drakthar .rpg-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+#rpg-drakthar .rpg-stat{
+  background:#291725;
+  border-radius:9px;
+  padding:12px;
+  text-align:center;
+}
+#rpg-drakthar .rpg-progress{
+  height:14px;
+  background:#30202b;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:8px;
+}
+#rpg-drakthar #rpg-xp-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#8b202e,#e8b94e);
+  transition:width .3s;
+}
+#rpg-drakthar .rpg-choice{
+  display:block;
+  width:100%;
+  text-align:left;
+  margin:8px 0;
+  padding:12px;
+  background:#211521;
+  color:#f5e6c8;
+  border:1px solid #986c43;
+  border-radius:8px;
+  cursor:pointer;
+}
+#rpg-drakthar .rpg-choice:hover{
+  background:#42202c;
+}
+#rpg-drakthar .rpg-choice:disabled{
+  cursor:default;
+  opacity:.75;
+}
+</style>
+
+<header style="text-align:center">
+  <div style="font-size:65px">🐉⚔️🐲</div>
+  <h2 style="font-size:30px;margin:8px">LAS CRÓNICAS DE DRAKTHAR</h2>
+  <p>Conviértete en una leyenda, domina la magia y conquista los cinco territorios.</p>
+</header>
+
+<!-- PERSONAJE -->
+<div class="rpg-panel">
+  <h3>🛡️ Tu personaje</h3>
+
+  <div class="rpg-grid">
+    <div class="rpg-stat">
+      <div>👑 Título</div>
+      <strong id="rpg-title">Aprendiz de Drakthar</strong>
+    </div>
+
+    <div class="rpg-stat">
+      <div>⭐ Nivel</div>
+      <strong id="rpg-level">1</strong>
+    </div>
+
+    <div class="rpg-stat">
+      <div>✨ Experiencia</div>
+      <strong id="rpg-xp">0 XP</strong>
+    </div>
+
+    <div class="rpg-stat">
+      <div>💎 Cristales</div>
+      <strong id="rpg-gems">0</strong>
+    </div>
+  </div>
+
+  <div class="rpg-progress">
+    <div id="rpg-xp-bar"></div>
+  </div>
+  <p id="rpg-xp-info">0 / 100 XP para el siguiente nivel</p>
+</div>
+
+<!-- MAPA -->
+<div class="rpg-panel">
+  <h3>🗺️ Tu aventura</h3>
+
+  <div class="rpg-grid">
+    <div class="rpg-stat">
+      🌲
+      <h3>Bosque de Vareth</h3>
+      <p>Aprende las palabras antiguas.</p>
+      <button class="rpg-button" data-rpg-zone="0">Explorar</button>
+    </div>
+
+    <div class="rpg-stat">
+      🌋
+      <h3>Volcán de Kraghor</h3>
+      <p>Enfréntate a las pruebas de fuego.</p>
+      <button class="rpg-button" data-rpg-zone="1">Explorar</button>
+    </div>
+
+    <div class="rpg-stat">
+      🏰
+      <h3>Reino de Nivarak</h3>
+      <p>Descubre los secretos del reino.</p>
+      <button class="rpg-button" data-rpg-zone="2">Explorar</button>
+    </div>
+
+    <div class="rpg-stat">
+      ⚔️
+      <h3>Castillo de Mordrak</h3>
+      <p>Demuestra tu sabiduría en combate.</p>
+      <button class="rpg-button" data-rpg-zone="3">Explorar</button>
+    </div>
+
+    <div class="rpg-stat">
+      🐉
+      <h3>Guarida de Dravok</h3>
+      <p>Enfréntate al dragón legendario.</p>
+      <button class="rpg-button" data-rpg-zone="4">Explorar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MISIONES -->
+<div class="rpg-panel">
+  <h3>📜 Diario de misiones</h3>
+  <p id="rpg-zone-message" role="status">
+    Selecciona una zona para comenzar tu aventura.
+  </p>
+  <div id="rpg-mission"></div>
+</div>
+
+<!-- MASCOTAS -->
+<div class="rpg-panel">
+  <h3>🐲 Colección de dragones</h3>
+  <p>Completa misiones para conseguir compañeros legendarios.</p>
+
+  <div class="rpg-grid">
+    <div class="rpg-stat">
+      🐣
+      <h3>Drakito</h3>
+      <p>Un pequeño dragón de fuego.</p>
+      <strong id="rpg-pet-0">🔒 Sin conseguir</strong>
+    </div>
+
+    <div class="rpg-stat">
+      🐲
+      <h3>Sombraveloz</h3>
+      <p>Un dragón oscuro y veloz.</p>
+      <strong id="rpg-pet-1">🔒 Sin conseguir</strong>
+    </div>
+
+    <div class="rpg-stat">
+      🔥
+      <h3>Dravok Joven</h3>
+      <p>Un poderoso compañero de llamas.</p>
+      <strong id="rpg-pet-2">🔒 Sin conseguir</strong>
+    </div>
+  </div>
+
+  <p id="rpg-pet-message">Tu colección está esperando a sus primeros dragones.</p>
+</div>
+
+<div class="rpg-panel" style="text-align:center">
+  <h3>🏆 Tu leyenda</h3>
+  <p id="rpg-achievements">Todavía no has completado ninguna misión.</p>
+  <button class="rpg-button" id="rpg-reset">Reiniciar aventura</button>
+  <p style="font-size:12px;color:#b8a58b">
+    Tu progreso se guarda en este navegador.
+  </p>
+</div>
+
+</section>
+
+<script>
+(function(){
+  const root = document.getElementById("rpg-drakthar");
+  if(!root || root.dataset.ready === "yes") return;
+  root.dataset.ready = "yes";
+
+  const SAVE_KEY = "drakthar_rpg_save_v1";
+
+  const zones = [
+    {
+      name:"Bosque de Vareth",
+      icon:"🌲",
+      reward:25,
+      gems:5,
+      pet:0,
+      questions:[
+        {q:"¿Cómo se dice «hola» en Drakthar?",a:["Tharek","Vardak","Nok","Mordrak"],correct:"Tharek"},
+        {q:"¿Cómo se dice «amigo»?",a:["Kragh","Daran","Dravok","Tharok"],correct:"Daran"},
+        {q:"¿Cómo se dice «dragón»?",a:["Dravok","Nara","Mora","Azharek"],correct:"Dravok"}
+      ]
+    },
+    {
+      name:"Volcán de Kraghor",
+      icon:"🌋",
+      reward:40,
+      gems:8,
+      pet:0,
+      questions:[
+        {q:"¿Cómo se dice «fuego»?",a:["Nara","Kragh","Mira","Drak"],correct:"Kragh"},
+        {q:"¿Cómo se dice «agua»?",a:["Nara","Tharek","Krazor","Mordrak"],correct:"Nara"},
+        {q:"¿Cómo se dice «volcán»?",a:["Kraghor","Tharika","Auraleth","Dareth"],correct:"Kraghor"}
+      ]
+    },
+    {
+      name:"Reino de Nivarak",
+      icon:"🏰",
+      reward:55,
+      gems:10,
+      pet:1,
+      questions:[
+        {q:"¿Cómo se dice «rey»?",a:["Tharok","Dravok","Nivorak","Drek"],correct:"Tharok"},
+        {q:"¿Cómo se dice «reina»?",a:["Tharika","Mareth","Ulmora","Kragh"],correct:"Tharika"},
+        {q:"¿Cómo se dice «esperanza»?",a:["Lumarath","Kharum","Nara","Mordeth"],correct:"Lumarath"}
+      ]
+    },
+    {
+      name:"Castillo de Mordrak",
+      icon:"⚔️",
+      reward:70,
+      gems:15,
+      pet:1,
+      questions:[
+        {q:"¿Cómo se dice «espada»?",a:["Krazor","Varkira","Nareth","Auron"],correct:"Krazor"},
+        {q:"¿Cómo se dice «escudo»?",a:["Drovak","Nivareth","Mira","Thazur"],correct:"Drovak"},
+        {q:"¿Cómo se dice «victoria»?",a:["Vortharok","Drekarok","Kharvok","Gromak"],correct:"Vortharok"}
+      ]
+    },
+    {
+      name:"Guarida de Dravok",
+      icon:"🐉",
+      reward:100,
+      gems:25,
+      pet:2,
+      questions:[
+        {q:"¿Cómo se dice «poder supremo»?",a:["Morghazar","Auraleth","Dareth","Nivorak"],correct:"Morghazar"},
+        {q:"¿Cómo se dice «inmortal»?",a:["Orinath","Krageth","Droveth","Maren"],correct:"Orinath"},
+        {q:"¿Cómo se dice «magia»?",a:["Thazur","Vardak","Akar","Mordeth"],correct:"Thazur"}
+      ]
+    }
+  ];
+
+  function newState(){
+    return {
+      xp:0,
+      gems:0,
+      completed:[],
+      pets:[],
+      zone:0,
+      question:0,
+      score:0,
+      active:false,
+      feedback:"",
+      choices:[],
+      lastReward:""
+    };
+  }
+
+  function load(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+      if(!saved || typeof saved !== "object") return newState();
+
+      const s = newState();
+      s.xp = Math.max(0, Number(saved.xp)||0);
+      s.gems = Math.max(0, Number(saved.gems)||0);
+      s.completed = Array.isArray(saved.completed)
+        ? saved.completed.filter(n=>Number.isInteger(n)&&n>=0&&n<zones.length)
+        : [];
+      s.pets = Array.isArray(saved.pets)
+        ? saved.pets.filter(n=>Number.isInteger(n)&&n>=0&&n<=2)
+        : [];
+      return s;
+    }catch(e){
+      return newState();
+    }
+  }
+
+  let state = load();
+
+  function save(){
+    try{
+      localStorage.setItem(SAVE_KEY,JSON.stringify({
+        xp:state.xp,
+        gems:state.gems,
+        completed:state.completed,
+        pets:state.pets
+      }));
+    }catch(e){}
+  }
+
+  function level(){
+    return Math.floor(state.xp/100)+1;
+  }
+
+  function title(){
+    const lv = level();
+    if(state.completed.includes(4)) return "👑 Leyenda de Drakthar";
+    if(lv>=8) return "🐉 Señor de los Dragones";
+    if(lv>=5) return "⚔️ Campeón de Drakthar";
+    if(lv>=3) return "🛡️ Guerrero de Drakthar";
+    return "🌱 Aprendiz de Drakthar";
+  }
+
+  function el(id){
+    return root.querySelector("#"+id);
+  }
+
+  function render(){
+    el("rpg-title").textContent = title();
+    el("rpg-level").textContent = level();
+    el("rpg-xp").textContent = state.xp+" XP";
+    el("rpg-gems").textContent = state.gems;
+
+    const progress = state.xp%100;
+    el("rpg-xp-bar").style.width = progress+"%";
+    el("rpg-xp-info").textContent =
+      progress+" / 100 XP para el siguiente nivel";
+
+    root.querySelectorAll("[data-rpg-zone]").forEach(button=>{
+      const i = Number(button.dataset.rpgZone);
+      const unlocked = i===0 || state.completed.includes(i-1) || state.completed.includes(i);
+
+      button.disabled = !unlocked;
+
+      if(state.completed.includes(i)){
+        button.textContent = "✅ Completada";
+      }else if(unlocked){
+        button.textContent = "🗺️ Explorar";
+      }else{
+        button.textContent = "🔒 Bloqueada";
+      }
+    });
+
+    for(let i=0;i<3;i++){
+      el("rpg-pet-"+i).textContent =
+        state.pets.includes(i) ? "🐉 ¡Conseguido!" : "🔒 Sin conseguir";
+    }
+
+    el("rpg-pet-message").textContent = state.pets.length
+      ? "Dragones conseguidos: "+state.pets.length+" de 3."
+      : "¡Completa misiones para conseguir tu primer dragón!";
+
+    const count = state.completed.length;
+    el("rpg-achievements").textContent = count===0
+      ? "Todavía no has completado ninguna misión."
+      : "🏆 Zonas completadas: "+count+" de 5. ¡Sigue avanzando!";
+
+    if(!state.active){
+      el("rpg-mission").innerHTML =
+        '<p>Elige una zona del mapa para comenzar una misión.</p>';
+    }
+  }
+
+  function showQuestion(){
+    const zone = zones[state.zone];
+    const q = zone.questions[state.question];
+
+    el("rpg-zone-message").textContent =
+      zone.icon+" "+zone.name+" — Pregunta "+(state.question+1)+" de "+zone.questions.length;
+
+    const box = el("rpg-mission");
+    box.replaceChildren();
+
+    const heading = document.createElement("h3");
+    heading.textContent = q.q;
+    box.appendChild(heading);
+
+    const options = document.createElement("div");
+    options.className = "rpg-grid";
+
+    state.choices.forEach(choice=>{
+      const button = document.createElement("button");
+      button.className = "rpg-choice";
+      button.textContent = choice;
+      button.type = "button";
+      button.addEventListener("click",()=>answer(choice));
+      options.appendChild(button);
+    });
+
+    box.appendChild(options);
+  }
+
+  function startZone(i){
+    if(i>0 && !state.completed.includes(i-1) && !state.completed.includes(i)){
+      el("rpg-zone-message").textContent =
+        "🔒 Completa primero la zona anterior para entrar aquí.";
+      return;
+    }
+
+    if(state.completed.includes(i)){
+      el("rpg-zone-message").textContent =
+        "✅ Ya has completado "+zones[i].name+". ¡Puedes volver a practicar!";
+      el("rpg-mission").innerHTML =
+        "<p>Esta zona ya está completada. Tu recompensa ya ha sido entregada.</p>";
+      state.active = false;
+      return;
+    }
+
+    state.zone = i;
+    state.question = 0;
+    state.score = 0;
+    state.active = true;
+    state.choices = zones[i].questions[0].a.slice().sort(()=>Math.random()-.5);
+    state.feedback = "";
+    showQuestion();
+  }
+
+  function answer(choice){
+    if(!state.active) return;
+
+    const zone = zones[state.zone];
+    const q = zone.questions[state.question];
+    const box = el("rpg-mission");
+
+    root.querySelectorAll(".rpg-choice").forEach(b=>b.disabled=true);
+
+    const feedback = document.createElement("p");
+    feedback.style.fontWeight = "bold";
+
+    if(choice===q.correct){
+      state.score++;
+      feedback.textContent = "✅ ¡Correcto! Has demostrado tu sabiduría.";
+    }else{
+      feedback.textContent = "❌ La respuesta correcta era: "+q.correct+".";
+    }
+
+    box.appendChild(feedback);
+
+    const next = document.createElement("button");
+    next.className = "rpg-button";
+    next.type = "button";
+    next.textContent = state.question===zone.questions.length-1
+      ? "🏆 Terminar misión"
+      : "➡️ Siguiente pregunta";
+
+    next.addEventListener("click",()=>{
+      state.question++;
+
+      if(state.question>=zone.questions.length){
+        finishZone();
+      }else{
+        state.choices = zone.questions[state.question].a
+          .slice().sort(()=>Math.random()-.5);
+        showQuestion();
+      }
+    });
+
+    box.appendChild(next);
+  }
+
+  function finishZone(){
+    const zone = zones[state.zone];
+    const box = el("rpg-mission");
+    box.replaceChildren();
+
+    state.active = false;
+
+    const heading = document.createElement("h3");
+    heading.textContent = "🏆 Misión completada";
+    box.appendChild(heading);
+
+    const score = document.createElement("p");
+    score.textContent = "Has acertado "+state.score+" de "+zone.questions.length+" preguntas.";
+    box.appendChild(score);
+
+    if(state.score>=2){
+      state.xp += zone.reward;
+      state.gems += zone.gems;
+      state.completed.push(state.zone);
+
+      let reward = "🎁 Recompensa: +"+zone.reward+" XP y +"+zone.gems+" cristales.";
+
+      if(!state.pets.includes(zone.pet)){
+        state.pets.push(zone.pet);
+        reward += " ¡Has conseguido un nuevo dragón!";
+      }
+
+      const rewardText = document.createElement("p");
+      rewardText.textContent = reward;
+      box.appendChild(rewardText);
+
+      const titleText = document.createElement("p");
+      titleText.textContent = "Tu título actual: "+title();
+      box.appendChild(titleText);
+    }else{
+      const retryText = document.createElement("p");
+      retryText.textContent =
+        "Necesitas al menos 2 aciertos para completar la misión. ¡Puedes intentarlo de nuevo!";
+      box.appendChild(retryText);
+    }
+
+    const retry = document.createElement("button");
+    retry.className = "rpg-button";
+    retry.type = "button";
+    retry.textContent = "🔄 Volver al mapa";
+    retry.addEventListener("click",()=>{
+      el("rpg-zone-message").textContent =
+        "Selecciona una zona para continuar tu aventura.";
+      render();
+    });
+    box.appendChild(retry);
+
+    save();
+    render();
+
+    if(state.completed.includes(4)){
+      const victory = document.createElement("p");
+      victory.textContent = "🐉 ¡Has conquistado Drakthar y derrotado al desafío definitivo!";
+      box.appendChild(victory);
+    }
+  }
+
+  root.querySelectorAll("[data-rpg-zone]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      startZone(Number(button.dataset.rpgZone));
+      render();
+      if(state.active) showQuestion();
+    });
+  });
+
+  el("rpg-reset").addEventListener("click",()=>{
+    const ok = window.confirm(
+      "¿Seguro que quieres reiniciar tu aventura? Perderás el progreso de este RPG."
+    );
+    if(!ok) return;
+
+    state = newState();
+    save();
+    render();
+    el("rpg-zone-message").textContent =
+      "Tu nueva aventura comienza ahora. ¡Buena suerte, héroe!";
+  });
+
+  render();
+})();
+</script>
+  
 </body></html>
