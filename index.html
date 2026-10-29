@@ -1781,4 +1781,329 @@ font-family:Arial,sans-serif;
 })();
 </script>
   
+<!-- ===== DRAKTHAR: REINO, EXPLORACIÓN Y JEFE FINAL ===== -->
+<section id="drakthar-ultimate" style="max-width:950px;margin:40px auto;padding:24px;background:#100910;color:#f5e6c8;border:2px solid #c99b3b;border-radius:18px;font-family:Arial,sans-serif">
+<style>
+#drakthar-ultimate *{box-sizing:border-box}
+#drakthar-ultimate h2,#drakthar-ultimate h3{color:#e8b94e}
+#drakthar-ultimate .du-panel{background:#1c111c;border:1px solid #70452c;border-radius:12px;padding:16px;margin:14px 0}
+#drakthar-ultimate .du-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+#drakthar-ultimate .du-card{background:#251725;border:1px solid #80562e;border-radius:10px;padding:14px;text-align:center}
+#drakthar-ultimate button{background:linear-gradient(135deg,#6f1724,#a52a2a);color:#ffe6a6;border:1px solid #c99b3b;border-radius:8px;padding:10px 13px;margin:4px;cursor:pointer;font-weight:bold}
+#drakthar-ultimate button:disabled{opacity:.45;cursor:not-allowed}
+#drakthar-ultimate .du-status{padding:12px;background:#080609;border-radius:8px;line-height:1.6}
+#drakthar-ultimate .du-bar{height:16px;background:#39202a;border-radius:20px;overflow:hidden}
+#drakthar-ultimate .du-fill{height:100%;width:100%;background:linear-gradient(90deg,#8b202e,#e8b94e);transition:width .3s}
+</style>
+
+<header style="text-align:center">
+  <div style="font-size:60px">🏰 ⚔️ 🐉</div>
+  <h2 style="font-size:29px">DRAKTHAR: EL REINO ETERNO</h2>
+  <p>Construye tu reino, explora tierras desconocidas y desafía al dragón ancestral.</p>
+</header>
+
+<div class="du-panel">
+  <h3>💰 Tu tesoro</h3>
+  <div class="du-grid">
+    <div class="du-card">🪙 Oro<br><strong id="du-gold">100</strong></div>
+    <div class="du-card">💎 Cristales<br><strong id="du-gems">20</strong></div>
+    <div class="du-card">🏰 Nivel del castillo<br><strong id="du-castle-level">1</strong></div>
+    <div class="du-card">⚔️ Arma<br><strong id="du-weapon">Espada básica</strong></div>
+  </div>
+</div>
+
+<div class="du-panel">
+  <h3>🏰 Tu castillo</h3>
+  <div style="text-align:center;font-size:75px" id="du-castle-art">🏰</div>
+  <p id="du-castle-description">Tu pequeño reino acaba de nacer.</p>
+  <button id="du-upgrade-castle">🧱 Mejorar castillo · 50 oro</button>
+  <button id="du-collect-gold">🪙 Recoger 20 oro</button>
+</div>
+
+<div class="du-panel">
+  <h3>🌍 Mundo por explorar</h3>
+  <div class="du-grid">
+    <div class="du-card">
+      <div style="font-size:42px">🌲</div>
+      <h3>Bosque de Vareth</h3>
+      <p>Encuentra monedas entre los árboles.</p>
+      <button data-du-region="0">Explorar</button>
+    </div>
+    <div class="du-card">
+      <div style="font-size:42px">🌋</div>
+      <h3>Volcán de Kraghor</h3>
+      <p>Busca cristales entre las rocas.</p>
+      <button data-du-region="1">Explorar</button>
+    </div>
+    <div class="du-card">
+      <div style="font-size:42px">🏚️</div>
+      <h3>Ruinas de Nivarak</h3>
+      <p>Descubre tesoros antiguos.</p>
+      <button data-du-region="2">Explorar</button>
+    </div>
+    <div class="du-card">
+      <div style="font-size:42px">🐉</div>
+      <h3>Guarida de Dravok</h3>
+      <p>La prueba definitiva.</p>
+      <button id="du-go-boss">Entrar en la guarida</button>
+    </div>
+  </div>
+  <p id="du-explore-message" class="du-status" role="status">¡El mundo te espera!</p>
+</div>
+
+<div class="du-panel">
+  <h3>⚒️ Herrería legendaria</h3>
+  <p>Fabrica equipamiento para mejorar tus ataques.</p>
+  <div class="du-grid">
+    <div class="du-card">
+      <div style="font-size:40px">🗡️</div>
+      <h3>Espada de Kraghor</h3>
+      <p>Aumenta tu daño.</p>
+      <strong>60 oro</strong><br>
+      <button data-du-craft="sword">Fabricar</button>
+    </div>
+    <div class="du-card">
+      <div style="font-size:40px">🛡️</div>
+      <h3>Escudo de Mordrak</h3>
+      <p>Reduce el daño recibido.</p>
+      <strong>45 oro</strong><br>
+      <button data-du-craft="shield">Fabricar</button>
+    </div>
+    <div class="du-card">
+      <div style="font-size:40px">💎</div>
+      <h3>Amuleto arcano</h3>
+      <p>Aumenta tus recompensas de cristales.</p>
+      <strong>15 cristales</strong><br>
+      <button data-du-craft="amulet">Fabricar</button>
+    </div>
+  </div>
+  <p id="du-craft-message" class="du-status" role="status">Tu herrería está lista.</p>
+</div>
+
+<div class="du-panel" id="du-boss-panel">
+  <h3>🐉 JEFE FINAL: DRAVOK</h3>
+  <div id="du-boss-art" style="font-size:75px;text-align:center">🐲🔥</div>
+  <p style="text-align:center">Fase: <strong id="du-boss-phase">1</strong> / 3</p>
+  <p>Vida de Dravok: <strong id="du-boss-hp">100</strong></p>
+  <div class="du-bar"><div id="du-boss-bar" class="du-fill"></div></div>
+  <p>Tu vida: <strong id="du-player-hp">100</strong> / 100</p>
+  <div class="du-bar"><div id="du-player-bar" class="du-fill" style="background:linear-gradient(90deg,#247b48,#81d66b)"></div></div>
+  <p id="du-boss-message" class="du-status" role="status">Pulsa «Comenzar combate» cuando estés preparado.</p>
+  <div style="text-align:center">
+    <button id="du-start-boss">⚔️ Comenzar combate</button>
+    <button id="du-attack-boss" disabled>🔥 Atacar</button>
+    <button id="du-special-boss" disabled>✨ Ataque especial · 5 cristales</button>
+    <button id="du-heal-boss" disabled>🧪 Curar · 20 oro</button>
+  </div>
+</div>
+
+</section>
+
+<script>
+(function(){
+  const root=document.getElementById("drakthar-ultimate");
+  if(!root||root.dataset.ready==="yes")return;
+  root.dataset.ready="yes";
+
+  const KEY="drakthar_ultimate_save_v1";
+  const fresh=()=>({
+    gold:100,gems:20,castle:1,weapon:0,shield:false,amulet:false,
+    regions:[],collected:false,playerHp:100,bossHp:100,
+    phase:1,battle:false,won:false
+  });
+
+  function load(){
+    try{
+      const x=JSON.parse(localStorage.getItem(KEY));
+      if(!x||typeof x!=="object")return fresh();
+      const s=fresh();
+      s.gold=Math.max(0,Number(x.gold)||0);
+      s.gems=Math.max(0,Number(x.gems)||0);
+      s.castle=Math.max(1,Math.min(10,Number(x.castle)||1));
+      s.weapon=x.weapon===1?1:0;
+      s.shield=x.shield===true;
+      s.amulet=x.amulet===true;
+      s.regions=Array.isArray(x.regions)?[...new Set(x.regions.filter(n=>[0,1,2].includes(n)))]:[];
+      s.collected=x.collected===true;
+      s.playerHp=Math.max(0,Math.min(100,Number(x.playerHp)||0));
+      s.bossHp=Math.max(0,Math.min(100,Number(x.bossHp)||100));
+      s.phase=Math.max(1,Math.min(3,Number(x.phase)||1));
+      s.battle=false;
+      s.won=x.won===true;
+      if(s.won)s.bossHp=0;
+      return s;
+    }catch(e){return fresh();}
+  }
+
+  let s=load();
+  const $=id=>root.querySelector("#"+id);
+  const regions=[
+    {name:"Bosque de Vareth",gold:25,gems:0},
+    {name:"Volcán de Kraghor",gold:15,gems:5},
+    {name:"Ruinas de Nivarak",gold:40,gems:2}
+  ];
+
+  function save(){
+    try{localStorage.setItem(KEY,JSON.stringify(s));}catch(e){}
+  }
+  function msg(id,text){$(id).textContent=text;}
+  function sayBoss(text){msg("du-boss-message",text);}
+
+  function render(){
+    $("du-gold").textContent=s.gold;
+    $("du-gems").textContent=s.gems;
+    $("du-castle-level").textContent=s.castle;
+    $("du-weapon").textContent=s.weapon?"Espada de Kraghor":"Espada básica";
+    $("du-castle-art").textContent=s.castle>=5?"🏯":s.castle>=3?"🏰✨":"🏰";
+    $("du-castle-description").textContent=
+      "Nivel "+s.castle+" · "+(s.castle>=5?"Una fortaleza legendaria.":s.castle>=3?"Tu castillo crece con fuerza.":"Tu reino está comenzando.");
+    $("du-upgrade-castle").disabled=s.castle>=10||s.gold<50;
+    $("du-collect-gold").disabled=s.collected;
+    $("du-collect-gold").textContent=s.collected?"✅ Oro recogido":"🪙 Recoger 20 oro";
+    root.querySelectorAll("[data-du-region]").forEach(b=>{
+      const i=Number(b.dataset.duRegion);
+      b.disabled=s.regions.includes(i);
+      b.textContent=s.regions.includes(i)?"✅ Exploración completada":"Explorar";
+    });
+    root.querySelectorAll("[data-du-craft]").forEach(b=>{
+      const id=b.dataset.duCraft;
+      const owned=id==="sword"?s.weapon===1:id==="shield"?s.shield:s.amulet;
+      b.disabled=owned;
+      if(owned)b.textContent="✅ Fabricado";
+    });
+    $("du-boss-hp").textContent=s.bossHp;
+    $("du-boss-phase").textContent=s.phase;
+    $("du-player-hp").textContent=s.playerHp;
+    $("du-boss-bar").style.width=s.bossHp+"%";
+    $("du-player-bar").style.width=s.playerHp+"%";
+    $("du-boss-art").textContent=s.phase===3?"🐉🔥💀":s.phase===2?"🐲🔥":"🐲";
+    $("du-start-boss").disabled=s.won;
+    $("du-attack-boss").disabled=!s.battle||s.won||s.playerHp<=0;
+    $("du-special-boss").disabled=!s.battle||s.won||s.playerHp<=0||s.gems<5;
+    $("du-heal-boss").disabled=!s.battle||s.won||s.playerHp<=0||s.gold<20||s.playerHp>=100;
+  }
+
+  $("du-upgrade-castle").addEventListener("click",()=>{
+    if(s.castle>=10||s.gold<50)return;
+    s.gold-=50;s.castle++;
+    save();render();
+    msg("du-explore-message","🏰 ¡Castillo mejorado al nivel "+s.castle+"!");
+  });
+
+  $("du-collect-gold").addEventListener("click",()=>{
+    if(s.collected)return;
+    s.gold+=20;s.collected=true;
+    save();render();
+    msg("du-explore-message","🪙 ¡Has recogido 20 monedas de oro!");
+  });
+
+  root.querySelectorAll("[data-du-region]").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const i=Number(b.dataset.duRegion);
+      if(s.regions.includes(i))return;
+      s.regions.push(i);
+      const r=regions[i];
+      s.gold+=r.gold;
+      s.gems+=r.gems+(s.amulet?2:0);
+      save();render();
+      msg("du-explore-message","🎁 "+r.name+": encontraste "+r.gold+" de oro y "+(r.gems+(s.amulet?2:0))+" cristales.");
+    });
+  });
+
+  root.querySelectorAll("[data-du-craft]").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const id=b.dataset.duCraft;
+      if(id==="sword"){
+        if(s.weapon||s.gold<60)return;
+        s.gold-=60;s.weapon=1;
+        msg("du-craft-message","🗡️ ¡Espada de Kraghor fabricada! Ahora haces más daño.");
+      }else if(id==="shield"){
+        if(s.shield||s.gold<45)return;
+        s.gold-=45;s.shield=true;
+        msg("du-craft-message","🛡️ ¡Escudo de Mordrak fabricado! Recibirás menos daño.");
+      }else{
+        if(s.amulet||s.gems<15)return;
+        s.gems-=15;s.amulet=true;
+        msg("du-craft-message","💎 ¡Amuleto arcano fabricado! Encontrarás cristales adicionales.");
+      }
+      save();render();
+    });
+  });
+
+  function bossEnd(){
+    s.battle=false;
+    if(s.bossHp<=0){
+      s.bossHp=0;s.won=true;
+      s.gold+=150;s.gems+=25;
+      save();render();
+      sayBoss("👑 ¡VICTORIA LEGENDARIA! Has derrotado a Dravok y ganado 150 de oro y 25 cristales.");
+    }else if(s.playerHp<=0){
+      s.playerHp=0;
+      save();render();
+      sayBoss("💫 Has perdido este combate. Pulsa «Comenzar combate» para volver a intentarlo.");
+    }
+  }
+
+  $("du-start-boss").addEventListener("click",()=>{
+    if(s.won)return;
+    if(s.playerHp<=0)s.playerHp=100;
+    if(s.bossHp<=0)s.bossHp=100;
+    s.phase=s.bossHp<=34?3:s.bossHp<=67?2:1;
+    s.battle=true;
+    save();render();
+    sayBoss("🐉 ¡Dravok ruge! Ataca con cuidado. El dragón se vuelve más peligroso en cada fase.");
+  });
+
+  function playerAttack(power){
+    if(!s.battle||s.won||s.playerHp<=0)return;
+    const damage=power+(s.weapon?15:0)+(s.castle-1)*2;
+    s.bossHp=Math.max(0,s.bossHp-damage);
+
+    if(s.bossHp===0){
+      bossEnd();return;
+    }
+
+    const newPhase=s.bossHp<=34?3:s.bossHp<=67?2:1;
+    if(newPhase>s.phase){
+      s.phase=newPhase;
+      sayBoss("🔥 ¡DRAVOK ENTRA EN LA FASE "+s.phase+"! Sus ataques son más fuertes.");
+    }
+
+    const baseDamage=s.phase===3?28:s.phase===2?20:12;
+    const damageTaken=Math.max(4,baseDamage-(s.shield?8:0));
+    s.playerHp=Math.max(0,s.playerHp-damageTaken);
+
+    save();render();
+    if(s.playerHp===0){
+      bossEnd();
+    }else{
+      sayBoss("⚔️ Hiciste "+damage+" de daño. Dravok te golpeó y te quitó "+damageTaken+" de vida.");
+    }
+  }
+
+  $("du-attack-boss").addEventListener("click",()=>playerAttack(15));
+  $("du-special-boss").addEventListener("click",()=>{
+    if(s.gems<5||!s.battle||s.won)return;
+    s.gems-=5;
+    save();
+    playerAttack(30);
+  });
+
+  $("du-heal-boss").addEventListener("click",()=>{
+    if(s.gold<20||!s.battle||s.won||s.playerHp>=100)return;
+    s.gold-=20;
+    s.playerHp=Math.min(100,s.playerHp+35);
+    save();render();
+    sayBoss("🧪 ¡Has recuperado hasta 35 puntos de vida!");
+  });
+
+  $("du-go-boss").addEventListener("click",()=>{
+    $("du-boss-panel").scrollIntoView({behavior:"smooth",block:"start"});
+    sayBoss("🐉 Has entrado en la guarida. ¡Pulsa «Comenzar combate» cuando estés listo!");
+  });
+
+  render();
+})();
+</script>
+
 </body></html>
