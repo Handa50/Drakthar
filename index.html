@@ -1,20 +1,99 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Drakthar — Traductor y diccionario</title>
+<title>Academia Drakthar — Escuela de lenguas antiguas</title>
 <style>
-:root{--bg:#10120e;--panel:#1d211a;--gold:#d6b56d;--text:#f2eee3;--muted:#c1bba9;--line:#4c472f}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(rgba(7,10,22,.76),rgba(7,10,22,.84)),url("fondo-drakthar.png") center center/cover fixed;color:var(--text);font-family:Georgia,"Times New Roman",serif}
-header{text-align:center;padding:40px 16px 26px;border-bottom:1px solid var(--line)}.rune{color:var(--gold);letter-spacing:.5em}h1{color:var(--gold);font-size:clamp(2.4rem,8vw,4.1rem);margin:12px 0;letter-spacing:.08em}header p{max-width:700px;margin:auto;line-height:1.6;color:var(--muted)}
-nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:14px;background:#151811;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--line)}nav a{color:var(--gold);text-decoration:none;padding:8px 11px;border:1px solid var(--line);border-radius:20px}
-main{max-width:1000px;margin:auto;padding:20px 16px 50px}.panel{background:linear-gradient(145deg,#25291f,#191c16);border:1px solid #45432f;border-radius:14px;padding:18px;margin:14px 0}
-label{display:block;color:var(--gold);font-size:1.1rem;margin-bottom:10px}textarea,input{width:100%;padding:13px;border:1px solid #615638;border-radius:9px;background:#12150f;color:var(--text);font:1rem Arial,sans-serif}textarea{min-height:110px;resize:vertical}
-button{border:1px solid #e4c77e;background:var(--gold);color:#19190f;font-weight:bold;padding:11px 15px;border-radius:8px;cursor:pointer;font-size:.98rem;margin:8px 6px 0 0}button.secondary,.example{background:#25291f;color:var(--text);border-color:#615638}
-.result{min-height:60px;padding:15px;background:#12150f;border:1px dashed #74613a;border-radius:9px;font-size:1.3rem;overflow-wrap:anywhere}.small{font: .93rem/1.6 Arial,sans-serif;color:var(--muted)}h2{color:var(--gold);margin-top:30px}.examples{display:flex;gap:8px;flex-wrap:wrap}.example{border:1px solid #45432f;border-radius:20px;padding:8px 12px;cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}.wordcard{background:#1b1e17;border:1px solid #45432f;border-radius:9px;padding:12px}.dw{color:var(--gold);font-weight:bold;font-size:1.1rem}.dm{margin-top:4px}.count{color:var(--muted);font: .9rem Arial,sans-serif;margin-top:8px}
-.runegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px}.runeitem{text-align:center;background:#151811;border:1px solid var(--line);border-radius:8px;padding:10px}.runesymbol{font-size:2rem;color:var(--gold)}.runeletter{color:var(--muted)}
-footer{text-align:center;color:var(--muted);border-top:1px solid var(--line);padding:20px}
+
+:root{
+  --gold:#f0c879;--gold2:#ffe7ad;--text:#f7f0df;--muted:#c9c0ae;
+  --panel:rgba(17,22,31,.88);--line:rgba(240,200,121,.34);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  background:
+    linear-gradient(180deg,rgba(5,9,18,.55),rgba(5,9,18,.88)),
+    url("fondo-drakthar.png") center center/cover fixed;
+  font-family:Georgia,"Times New Roman",serif;
+}
+header{
+  text-align:center;padding:62px 18px 38px;
+  background:linear-gradient(180deg,rgba(4,8,16,.5),rgba(4,8,16,.12));
+  border-bottom:1px solid var(--line);
+}
+.rune{color:var(--gold);letter-spacing:.65em;font-size:1.05rem;text-shadow:0 0 16px #e6a944}
+h1{
+  color:var(--gold2);font-size:clamp(2.8rem,9vw,5.4rem);margin:14px 0;
+  letter-spacing:.16em;text-shadow:0 0 12px #a85b1c,0 5px 25px #000;
+}
+header p{max-width:720px;margin:0 auto;color:#eee2c9;line-height:1.8;font-size:1.08rem}
+nav{
+  display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:16px;
+  background:rgba(8,12,20,.94);backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line);
+}
+nav a{
+  color:var(--gold2);text-decoration:none;padding:10px 17px;
+  border:1px solid var(--line);border-radius:7px;background:linear-gradient(135deg,rgba(78,48,25,.75),rgba(19,25,34,.9));
+  transition:.2s;letter-spacing:.04em;
+}
+nav a:hover{transform:translateY(-2px);background:linear-gradient(135deg,#8d5a2c,#382b20);box-shadow:0 0 18px #d69b4a55}
+main{max-width:1080px;margin:auto;padding:28px 17px 60px}
+h2{
+  color:var(--gold2);margin:38px 0 16px;font-size:1.65rem;
+  text-shadow:0 0 12px #9c652c;letter-spacing:.04em;
+}
+.panel{
+  background:linear-gradient(145deg,rgba(25,31,42,.94),rgba(10,15,24,.94));
+  border:1px solid var(--line);border-radius:13px;padding:22px;margin:14px 0;
+  box-shadow:0 12px 35px #0008,inset 0 1px #ffffff0b;
+}
+label{display:block;color:var(--gold2);font-size:1.1rem;margin-bottom:10px}
+textarea,input{
+  width:100%;padding:14px;border:1px solid #8c7045;border-radius:8px;
+  background:rgba(5,9,16,.9);color:var(--text);font:1rem Arial,sans-serif;
+  outline:none;
+}
+textarea:focus,input:focus{border-color:var(--gold2);box-shadow:0 0 0 3px #e9bb6330}
+textarea{min-height:120px;resize:vertical}
+button{
+  border:1px solid #f4d58d;background:linear-gradient(135deg,#f0ce85,#b47a37);
+  color:#21170d;font-weight:bold;padding:12px 17px;border-radius:7px;
+  cursor:pointer;font-size:.98rem;margin:9px 7px 0 0;transition:.18s;
+}
+button:hover{transform:translateY(-2px);filter:brightness(1.12);box-shadow:0 5px 18px #d99a4440}
+button.secondary,.example{
+  background:linear-gradient(135deg,#30394a,#171e2b);color:var(--gold2);
+  border:1px solid #7c6848;
+}
+.result{
+  min-height:60px;padding:16px;background:rgba(4,8,14,.8);
+  border:1px dashed #a88955;border-radius:8px;font-size:1.3rem;overflow-wrap:anywhere;
+}
+.small{font:.93rem/1.7 Arial,sans-serif;color:var(--muted)}
+.examples{display:flex;gap:9px;flex-wrap:wrap}
+.example{border-radius:6px;padding:9px 14px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:16px}
+.wordcard{
+  background:linear-gradient(145deg,rgba(40,47,59,.94),rgba(17,23,33,.96));
+  border:1px solid #8d744b66;border-radius:8px;padding:14px;transition:.18s
+}
+.wordcard:hover{border-color:var(--gold);transform:translateY(-2px)}
+.dw{color:var(--gold2);font-weight:bold;font-size:1.12rem}
+.dm{margin-top:5px;color:#e4ddcf}
+.count{color:var(--muted);font:.9rem Arial,sans-serif;margin-top:10px}
+.runegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:9px}
+.runeitem{text-align:center;background:rgba(5,10,17,.72);border:1px solid var(--line);border-radius:8px;padding:12px}
+.runesymbol{font-size:2.1rem;color:var(--gold2);text-shadow:0 0 12px #d59a46}
+.runeletter{color:var(--muted)}
+footer{text-align:center;color:var(--muted);border-top:1px solid var(--line);padding:25px;background:rgba(5,9,16,.8);letter-spacing:.08em}
+@media(max-width:600px){
+  header{padding:42px 15px 28px}nav{gap:7px}nav a{padding:9px 11px;font-size:.9rem}
+  .panel{padding:16px}main{padding:18px 12px 42px}
+}
+
 </style></head><body>
-<header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>DRAKTHAR</h1><p>El idioma antiguo de una civilización perdida. Traduce frases, busca palabras, escucha la pronunciación y aprende con retos.</p></header>
-<nav><a href="#traductor">Traductor</a><a href="#diccionario">Diccionario</a><a href="#alfabeto">Alfabeto rúnico</a><a href="#reto">Reto</a></nav>
+<header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>ACADEMIA DRAKTHAR</h1><p>Escuela de lenguas antiguas y artes olvidadas. Aprende el idioma de los dragones, descifra runas y supera los desafíos de la academia.</p></header>
+<nav><a href="#traductor">⚗ Traductor</a><a href="#diccionario">📜 Biblioteca</a><a href="#alfabeto">ᚱ Runas</a><a href="#reto">🏆 Pruebas</a></nav>
 <main>
 <section id="traductor"><h2>⚔️ Traductor</h2><div class="panel"><label for="input">Español o Drakthar</label><textarea id="input" placeholder="Escribe aquí una frase..."></textarea><button id="toDrak">🇪🇸 → 🗿 Traducir a Drakthar</button><button id="toEs" class="secondary">🗿 → 🇪🇸 Traducir al español</button><button id="clear" class="secondary">Borrar</button></div>
 <div class="panel"><label>Resultado</label><div id="output" class="result" aria-live="polite">Tu traducción aparecerá aquí…</div><button id="copy" class="secondary">Copiar</button><button id="speak" class="secondary">🔊 Escuchar pronunciación</button><div id="status" class="small"></div></div></section>
