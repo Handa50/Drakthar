@@ -389,6 +389,40 @@ function actualizar() {
   });
 
   guardarProgreso();
+  mostrarDiploma();
+}
+
+function mostrarDiploma() {
+  if (progreso.aprobados.length < 10) return;
+
+  if (document.getElementById("diplomaDrakthar")) return;
+
+  let nombre = localStorage.getItem("nombreGraduado");
+
+  if (!nombre) {
+    nombre = prompt("¡Te has graduado! ¿Cómo te llamas?");
+    if (!nombre || !nombre.trim()) nombre = "Aprendiz de Drakthar";
+    localStorage.setItem("nombreGraduado", nombre.trim());
+  }
+
+  const diploma = document.createElement("div");
+  diploma.id = "diplomaDrakthar";
+  diploma.className = "panel";
+  diploma.style.cssText =
+    "text-align:center;padding:35px;border:5px double #c99b45;background:#292016;color:#ffe6a0;";
+
+  diploma.innerHTML = `
+    <h2>🏆 CERTIFICADO OFICIAL 🏆</h2>
+    <h1>ACADEMIA DRAKTHAR</h1>
+    <p>Se certifica que</p>
+    <h2>${nombre.replace(/[&<>"']/g, "")}</h2>
+    <p>ha superado los 10 niveles de la Academia.</p>
+    <h2>💎 DRAGÓN SUPREMO 💎</h2>
+    <p>Graduado en el arte de la lengua Drakthar.</p>
+    <button onclick="window.print()">🖨️ Imprimir diploma</button>
+  `;
+
+  academia.appendChild(diploma);
 }
 
 function normalizar(texto) {
