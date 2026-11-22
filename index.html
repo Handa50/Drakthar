@@ -184,4 +184,98 @@ const quizzes=[['¿Qué significa “Tharek”?',['Hola','Adiós','Silencio'],'H
 let qi=0;function showQuiz(){const q=quizzes[qi];document.getElementById('quizQuestion').textContent=q[0];const c=document.getElementById('quizChoices');c.innerHTML='';document.getElementById('quizResult').textContent='';q[1].forEach(choice=>{const b=document.createElement('button');b.className='secondary';b.textContent=choice;b.onclick=()=>{document.getElementById('quizResult').textContent=choice===q[2]?'¡Correcto! 🗿':'Casi. La respuesta correcta es: '+q[2]+'.';};c.append(b);});}
 showQuiz();document.getElementById('nextQuiz').onclick=()=>{qi=(qi+1)%quizzes.length;showQuiz();};
 document.getElementById('input').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')doTranslate(false);});
+</script>
+<script>
+const progreso = JSON.parse(localStorage.getItem("progresoDrakthar")) || {
+  nivel: 1,
+  xp: 0
+};
+
+const academia = document.querySelector("#academia");
+const niveles = academia.querySelectorAll(".panel");
+
+function guardarProgreso() {
+  localStorage.setItem("progresoDrakthar", JSON.stringify(progreso));
+}
+
+const marcador = document.createElement("div");
+marcador.className = "panel";
+marcador.innerHTML = `
+  <h3>⭐ Tu progreso</h3>
+  <p id="xpDrakthar"></p>
+  <p id="nivelDrakthar"></p>
+`;
+academia.insertBefore(marcador, niveles[0]);
+
+function actualizar() {
+  document.getElementById("xpDrakthar").textContent =
+    "Experiencia: " + progreso.xp + " XP";
+
+  document.getElementById("nivelDrakthar").textContent =
+    "Nivel desbloqueado: " + progreso.nivel + " de 10";
+
+  niveles.forEach((panel, indice) => {
+    const numero = indice + 1;
+    let boton = panel.querySelector(".botonNivel");
+
+    if (!boton) {
+      boton = document.createElement("button");
+      boton.className = "botonNivel";
+      boton.style.cssText =
+        "padding:12px;margin:10px;background:#a87935;color:white;border:0;border-radius:8px;cursor:pointer;";
+      panel.appendChild(boton);
+    }
+
+    if (numero <= progreso.nivel) {
+      boton.textContent = "📝 Hacer examen";
+      boton.disabled = false;
+      boton.onclick = () => hacerExamen(numero);
+    } else {
+      boton.textContent = "🔒 Nivel bloqueado";
+      boton.disabled = true;
+    }
+  });
+}
+
+function hacerExamen(numero) {
+  if (numero !== 1) {
+    alert("¡Pronto estará disponible este examen!");
+    return;
+  }
+
+  const preguntas = [
+    ["¿Cómo se dice Hola?", "tharek"],
+    ["¿Cómo se dice Gracias?", "tham"],
+    ["¿Cómo se dice Amigo?", "daran"]
+  ];
+
+  let aciertos = 0;
+
+  for (const pregunta of preguntas) {
+    const respuesta = prompt(pregunta[0]);
+
+    if (respuesta && respuesta.trim().toLowerCase() === pregunta[1]) {
+      aciertos++;
+      alert("¡Correcto!");
+    } else {
+      alert("No es correcto. La respuesta era: " + pregunta[1]);
+    }
+  }
+
+  if (aciertos === 3) {
+    alert("¡Examen superado! Has ganado 100 XP.");
+    progreso.xp += 100;
+
+    if (progreso.nivel === 1) {
+      progreso.nivel = 2;
+    }
+
+    guardarProgreso();
+    actualizar();
+  } else {
+    alert("Has conseguido " + aciertos + " de 3. ¡Puedes volver a intentarlo!");
+  }
+}
+
+actualizar();
 </script></body></html>
