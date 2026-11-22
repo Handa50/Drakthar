@@ -186,26 +186,172 @@ showQuiz();document.getElementById('nextQuiz').onclick=()=>{qi=(qi+1)%quizzes.le
 document.getElementById('input').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')doTranslate(false);});
 </script>
 <script>
-const progreso = JSON.parse(localStorage.getItem("progresoDrakthar")) || {
-  nivel: 1,
-  xp: 0
-};
+const examenes = [
+[
+["¿Cómo se dice hola?","tharek"],
+["¿Cómo se dice gracias?","tham"],
+["¿Cómo se dice amigo?","daran"],
+["¿Cómo se dice yo?","ar"],
+["¿Cómo se dice tú?","tar"],
+["¿Cómo se dice él o ella?","uth"],
+["¿Cómo se dice nosotros?","arak"],
+["¿Cómo se dice sol?","auron"],
+["¿Cómo se dice luna?","mira"],
+["¿Cómo se dice agua?","nara"]
+],
+[
+["¿Cómo se dice fuego?","kragh"],
+["¿Cómo se dice casa?","mora"],
+["¿Cómo se dice hablar?","thalan"],
+["¿Cómo se dice mañana?","mornek"],
+["¿Cómo se dice hoy?","kethar"],
+["¿Cómo se dice estrella?","zareth"],
+["¿Cómo se dice correr?","zakar"],
+["¿Cómo se dice rápido?","zakar"],
+["¿Cómo se dice amigo?","daran"],
+["¿Cómo se dice adiós?","vardak"]
+],
+[
+["Traduce: Ar","yo"],
+["Traduce: Tar","tu"],
+["Traduce: Auron","sol"],
+["Traduce: Mira","luna"],
+["Traduce: Nara","agua"],
+["Traduce: Mora","casa"],
+["Traduce: Tharek","hola"],
+["Traduce: Tham","gracias"],
+["Traduce: Daran","amigo"],
+["Traduce: Kethar","hoy"]
+],
+[
+["¿Qué significa Thalan?","hablar"],
+["¿Qué significa Zareth?","estrella"],
+["¿Qué significa Mornek?","mañana"],
+["¿Qué significa Kragh?","fuego"],
+["¿Qué significa Vardak?","adios"],
+["¿Qué significa Arak?","nosotros"],
+["¿Qué significa Uth?","el o ella"],
+["¿Qué significa Zakar?","correr"],
+["¿Qué significa Auron?","sol"],
+["¿Qué significa Nara?","agua"]
+],
+[
+["Traduce: hola","tharek"],
+["Traduce: amigo","daran"],
+["Traduce: casa","mora"],
+["Traduce: fuego","kragh"],
+["Traduce: luna","mira"],
+["Traduce: estrella","zareth"],
+["Traduce: mañana","mornek"],
+["Traduce: hablar","thalan"],
+["Traduce: nosotros","arak"],
+["Traduce: gracias","tham"]
+],
+[
+["¿Cómo se dice sol en Drakthar?","auron"],
+["¿Cómo se dice agua en Drakthar?","nara"],
+["¿Cómo se dice casa en Drakthar?","mora"],
+["¿Cómo se dice fuego en Drakthar?","kragh"],
+["¿Cómo se dice luna en Drakthar?","mira"],
+["¿Cómo se dice amigo en Drakthar?","daran"],
+["¿Cómo se dice hoy en Drakthar?","kethar"],
+["¿Cómo se dice mañana en Drakthar?","mornek"],
+["¿Cómo se dice hablar en Drakthar?","thalan"],
+["¿Cómo se dice estrella en Drakthar?","zareth"]
+],
+[
+["Traduce: Tharek","hola"],
+["Traduce: Tham","gracias"],
+["Traduce: Daran","amigo"],
+["Traduce: Mora","casa"],
+["Traduce: Kragh","fuego"],
+["Traduce: Mira","luna"],
+["Traduce: Auron","sol"],
+["Traduce: Zareth","estrella"],
+["Traduce: Thalan","hablar"],
+["Traduce: Vardak","adios"]
+],
+[
+["¿Qué significa Ar?","yo"],
+["¿Qué significa Tar?","tu"],
+["¿Qué significa Uth?","el o ella"],
+["¿Qué significa Arak?","nosotros"],
+["¿Qué significa Nara?","agua"],
+["¿Qué significa Kethar?","hoy"],
+["¿Qué significa Mornek?","mañana"],
+["¿Qué significa Zakar?","correr"],
+["¿Qué significa Auron?","sol"],
+["¿Qué significa Daran?","amigo"]
+],
+[
+["Traduce: agua","nara"],
+["Traduce: sol","auron"],
+["Traduce: luna","mira"],
+["Traduce: estrella","zareth"],
+["Traduce: hablar","thalan"],
+["Traduce: correr","zakar"],
+["Traduce: hoy","kethar"],
+["Traduce: mañana","mornek"],
+["Traduce: yo","ar"],
+["Traduce: tú","tar"]
+],
+[
+["¿Cómo se dice hola?","tharek"],
+["¿Cómo se dice adiós?","vardak"],
+["¿Cómo se dice gracias?","tham"],
+["¿Cómo se dice amigo?","daran"],
+["¿Cómo se dice casa?","mora"],
+["¿Cómo se dice fuego?","kragh"],
+["¿Cómo se dice agua?","nara"],
+["¿Cómo se dice sol?","auron"],
+["¿Cómo se dice luna?","mira"],
+["¿Cómo se dice estrella?","zareth"]
+]
+];
+
+const nombresNiveles = [
+"Huevo de dragón","Aprendiz","Explorador","Guerrero",
+"Domador de dragones","Sabio rúnico","Caballero antiguo",
+"Maestro de Drakthar","Señor de los dragones","Dragón Supremo"
+];
+
+let progreso;
+try {
+  progreso = JSON.parse(localStorage.getItem("progresoDrakthar"));
+} catch(e) {
+  progreso = null;
+}
+
+if (!progreso || typeof progreso !== "object") {
+  progreso = {nivel:1,xp:0,aprobados:[]};
+}
+
+progreso.nivel = Math.max(1, Math.min(10, Number(progreso.nivel) || 1));
+progreso.xp = Math.max(0, Number(progreso.xp) || 0);
+progreso.aprobados = Array.isArray(progreso.aprobados)
+  ? progreso.aprobados
+  : [];
+
+if (progreso.nivel >= 2 && !progreso.aprobados.includes(1)) {
+  progreso.aprobados.push(1);
+}
 
 const academia = document.querySelector("#academia");
 const niveles = academia.querySelectorAll(".panel");
 
-function guardarProgreso() {
-  localStorage.setItem("progresoDrakthar", JSON.stringify(progreso));
-}
-
 const marcador = document.createElement("div");
 marcador.className = "panel";
 marcador.innerHTML = `
-  <h3>⭐ Tu progreso</h3>
-  <p id="xpDrakthar"></p>
-  <p id="nivelDrakthar"></p>
+<h3>⭐ Tu progreso</h3>
+<p id="xpDrakthar"></p>
+<p id="nivelDrakthar"></p>
+<p id="aprobadosDrakthar"></p>
 `;
 academia.insertBefore(marcador, niveles[0]);
+
+function guardarProgreso() {
+  localStorage.setItem("progresoDrakthar", JSON.stringify(progreso));
+}
 
 function actualizar() {
   document.getElementById("xpDrakthar").textContent =
@@ -213,6 +359,9 @@ function actualizar() {
 
   document.getElementById("nivelDrakthar").textContent =
     "Nivel desbloqueado: " + progreso.nivel + " de 10";
+
+  document.getElementById("aprobadosDrakthar").textContent =
+    "Exámenes superados: " + progreso.aprobados.length + " de 10";
 
   niveles.forEach((panel, indice) => {
     const numero = indice + 1;
@@ -227,7 +376,10 @@ function actualizar() {
     }
 
     if (numero <= progreso.nivel) {
-      boton.textContent = "📝 Hacer examen";
+      boton.textContent = progreso.aprobados.includes(numero)
+        ? "✅ Examen superado (repetir)"
+        : "📝 Hacer examen";
+
       boton.disabled = false;
       boton.onclick = () => hacerExamen(numero);
     } else {
@@ -235,47 +387,73 @@ function actualizar() {
       boton.disabled = true;
     }
   });
+
+  guardarProgreso();
+}
+
+function normalizar(texto) {
+  return texto.toLocaleLowerCase("es")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .trim()
+    .replace(/\s+/g," ");
 }
 
 function hacerExamen(numero) {
-  if (numero !== 1) {
-    alert("¡Pronto estará disponible este examen!");
-    return;
-  }
-
-  const preguntas = [
-    ["¿Cómo se dice Hola?", "tharek"],
-    ["¿Cómo se dice Gracias?", "tham"],
-    ["¿Cómo se dice Amigo?", "daran"]
-  ];
-
+  const preguntas = examenes[numero - 1];
   let aciertos = 0;
 
-  for (const pregunta of preguntas) {
-    const respuesta = prompt(pregunta[0]);
+  alert(
+    "🐉 EXAMEN: " + nombresNiveles[numero - 1] +
+    "\n\nSon 10 preguntas. Necesitas 8 aciertos para aprobar."
+  );
 
-    if (respuesta && respuesta.trim().toLowerCase() === pregunta[1]) {
+  for (let i = 0; i < preguntas.length; i++) {
+    const pregunta = preguntas[i];
+    const respuesta = prompt(
+      "Pregunta " + (i + 1) + " de 10\n\n" + pregunta[0]
+    );
+
+    if (respuesta === null) {
+      alert("Examen cancelado. Puedes intentarlo de nuevo.");
+      return;
+    }
+
+    if (normalizar(respuesta) === normalizar(pregunta[1])) {
       aciertos++;
-      alert("¡Correcto!");
+      alert("✅ ¡Correcto!");
     } else {
-      alert("No es correcto. La respuesta era: " + pregunta[1]);
+      alert("❌ La respuesta correcta era: " + pregunta[1]);
     }
   }
 
-  if (aciertos === 3) {
-    alert("¡Examen superado! Has ganado 100 XP.");
-    progreso.xp += 100;
+  if (aciertos >= 8) {
+    alert("🏆 ¡EXAMEN SUPERADO!\nHas acertado " + aciertos + " de 10.");
 
-    if (progreso.nivel === 1) {
-      progreso.nivel = 2;
+    if (!progreso.aprobados.includes(numero)) {
+      progreso.aprobados.push(numero);
+      progreso.xp += 100;
+    }
+
+    if (numero === progreso.nivel && progreso.nivel < 10) {
+      progreso.nivel++;
+      alert("🔓 ¡Has desbloqueado el nivel " + progreso.nivel + "!");
+    }
+
+    if (numero === 10) {
+      alert("💎 ¡ERES EL DRAGÓN SUPREMO! ¡Has completado la Academia!");
     }
 
     guardarProgreso();
     actualizar();
   } else {
-    alert("Has conseguido " + aciertos + " de 3. ¡Puedes volver a intentarlo!");
+    alert(
+      "📜 Has acertado " + aciertos + " de 10.\n" +
+      "Necesitas 8 para aprobar. ¡Puedes repetirlo!"
+    );
   }
 }
 
 actualizar();
-</script></body></html>
+</script>
+</body></html>
