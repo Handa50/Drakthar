@@ -184,7 +184,6 @@ const quizzes=[['¿Qué significa “Tharek”?',['Hola','Adiós','Silencio'],'H
 let qi=0;function showQuiz(){const q=quizzes[qi];document.getElementById('quizQuestion').textContent=q[0];const c=document.getElementById('quizChoices');c.innerHTML='';document.getElementById('quizResult').textContent='';q[1].forEach(choice=>{const b=document.createElement('button');b.className='secondary';b.textContent=choice;b.onclick=()=>{document.getElementById('quizResult').textContent=choice===q[2]?'¡Correcto! 🗿':'Casi. La respuesta correcta es: '+q[2]+'.';};c.append(b);});}
 showQuiz();document.getElementById('nextQuiz').onclick=()=>{qi=(qi+1)%quizzes.length;showQuiz();};
 document.getElementById('input').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')doTranslate(false);});
-</script>
 const examenes = [
 [
 ["¿Cómo se dice hola?","tharek"],
