@@ -185,129 +185,129 @@ let qi=0;function showQuiz(){const q=quizzes[qi];document.getElementById('quizQu
 showQuiz();document.getElementById('nextQuiz').onclick=()=>{qi=(qi+1)%quizzes.length;showQuiz();};
 document.getElementById('input').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')doTranslate(false);});
 </script>
-<script>
 const examenes = [
 [
 ["¿Cómo se dice hola?","tharek"],
+["¿Cómo se dice adiós?","vardak"],
 ["¿Cómo se dice gracias?","tham"],
 ["¿Cómo se dice amigo?","daran"],
 ["¿Cómo se dice yo?","ar"],
 ["¿Cómo se dice tú?","tar"],
-["¿Cómo se dice él o ella?","uth"],
-["¿Cómo se dice nosotros?","arak"],
 ["¿Cómo se dice sol?","auron"],
 ["¿Cómo se dice luna?","mira"],
-["¿Cómo se dice agua?","nara"]
+["¿Cómo se dice agua?","nara"],
+["¿Cómo se dice fuego?","kragh"]
 ],
 [
-["¿Cómo se dice fuego?","kragh"],
 ["¿Cómo se dice casa?","mora"],
-["¿Cómo se dice hablar?","thalan"],
-["¿Cómo se dice mañana?","mornek"],
-["¿Cómo se dice hoy?","kethar"],
 ["¿Cómo se dice estrella?","zareth"],
+["¿Cómo se dice hablar?","thalan"],
 ["¿Cómo se dice correr?","zakar"],
-["¿Cómo se dice rápido?","zakar"],
-["¿Cómo se dice amigo?","daran"],
-["¿Cómo se dice adiós?","vardak"]
-],
-[
-["Traduce: Ar","yo"],
-["Traduce: Tar","tu"],
-["Traduce: Auron","sol"],
-["Traduce: Mira","luna"],
-["Traduce: Nara","agua"],
-["Traduce: Mora","casa"],
-["Traduce: Tharek","hola"],
-["Traduce: Tham","gracias"],
-["Traduce: Daran","amigo"],
-["Traduce: Kethar","hoy"]
-],
-[
-["¿Qué significa Thalan?","hablar"],
-["¿Qué significa Zareth?","estrella"],
-["¿Qué significa Mornek?","mañana"],
-["¿Qué significa Kragh?","fuego"],
-["¿Qué significa Vardak?","adios"],
-["¿Qué significa Arak?","nosotros"],
-["¿Qué significa Uth?","el o ella"],
-["¿Qué significa Zakar?","correr"],
+["¿Cómo se dice hoy?","kethar"],
+["¿Cómo se dice mañana?","mornek"],
 ["¿Qué significa Auron?","sol"],
-["¿Qué significa Nara?","agua"]
+["¿Qué significa Mira?","luna"],
+["¿Qué significa Nara?","agua"],
+["¿Qué significa Kragh?","fuego"]
 ],
 [
-["Traduce: hola","tharek"],
-["Traduce: amigo","daran"],
-["Traduce: casa","mora"],
-["Traduce: fuego","kragh"],
-["Traduce: luna","mira"],
-["Traduce: estrella","zareth"],
-["Traduce: mañana","mornek"],
-["Traduce: hablar","thalan"],
-["Traduce: nosotros","arak"],
-["Traduce: gracias","tham"]
-],
-[
-["¿Cómo se dice sol en Drakthar?","auron"],
-["¿Cómo se dice agua en Drakthar?","nara"],
-["¿Cómo se dice casa en Drakthar?","mora"],
-["¿Cómo se dice fuego en Drakthar?","kragh"],
-["¿Cómo se dice luna en Drakthar?","mira"],
-["¿Cómo se dice amigo en Drakthar?","daran"],
-["¿Cómo se dice hoy en Drakthar?","kethar"],
-["¿Cómo se dice mañana en Drakthar?","mornek"],
-["¿Cómo se dice hablar en Drakthar?","thalan"],
-["¿Cómo se dice estrella en Drakthar?","zareth"]
-],
-[
-["Traduce: Tharek","hola"],
-["Traduce: Tham","gracias"],
-["Traduce: Daran","amigo"],
-["Traduce: Mora","casa"],
-["Traduce: Kragh","fuego"],
-["Traduce: Mira","luna"],
-["Traduce: Auron","sol"],
-["Traduce: Zareth","estrella"],
-["Traduce: Thalan","hablar"],
-["Traduce: Vardak","adios"]
+["Traduce Tharek","hola"],
+["Traduce Vardak","adios"],
+["Traduce Tham","gracias"],
+["Traduce Daran","amigo"],
+["Traduce Mora","casa"],
+["Traduce Zareth","estrella"],
+["Traduce Thalan","hablar"],
+["Traduce Zakar","correr"],
+["Traduce Kethar","hoy"],
+["Traduce Mornek","mañana"]
 ],
 [
 ["¿Qué significa Ar?","yo"],
 ["¿Qué significa Tar?","tu"],
 ["¿Qué significa Uth?","el o ella"],
 ["¿Qué significa Arak?","nosotros"],
-["¿Qué significa Nara?","agua"],
-["¿Qué significa Kethar?","hoy"],
-["¿Qué significa Mornek?","mañana"],
-["¿Qué significa Zakar?","correr"],
 ["¿Qué significa Auron?","sol"],
-["¿Qué significa Daran?","amigo"]
+["¿Qué significa Mira?","luna"],
+["¿Qué significa Daran?","amigo"],
+["¿Qué significa Mora?","casa"],
+["¿Qué significa Kragh?","fuego"],
+["¿Qué significa Nara?","agua"]
 ],
 [
-["Traduce: agua","nara"],
-["Traduce: sol","auron"],
-["Traduce: luna","mira"],
-["Traduce: estrella","zareth"],
+["Traduce: yo","ar"],
+["Traduce: tú","tar"],
+["Traduce: nosotros","arak"],
+["Traduce: amigo","daran"],
+["Traduce: casa","mora"],
 ["Traduce: hablar","thalan"],
 ["Traduce: correr","zakar"],
+["Traduce: estrella","zareth"],
 ["Traduce: hoy","kethar"],
-["Traduce: mañana","mornek"],
-["Traduce: yo","ar"],
-["Traduce: tú","tar"]
+["Traduce: mañana","mornek"]
 ],
 [
-["¿Cómo se dice hola?","tharek"],
-["¿Cómo se dice adiós?","vardak"],
-["¿Cómo se dice gracias?","tham"],
-["¿Cómo se dice amigo?","daran"],
-["¿Cómo se dice casa?","mora"],
-["¿Cómo se dice fuego?","kragh"],
-["¿Cómo se dice agua?","nara"],
-["¿Cómo se dice sol?","auron"],
-["¿Cómo se dice luna?","mira"],
-["¿Cómo se dice estrella?","zareth"]
+["Traduce: yo hablo","ar thalan"],
+["Traduce: tú hablas","tar thalan"],
+["Traduce: él habla","uth thalan"],
+["Traduce: nosotros hablamos","arak thalan"],
+["¿Qué significa Ar Thalan?","yo hablo"],
+["¿Qué significa Tar Thalan?","tu hablas"],
+["¿Qué significa Uth Thalan?","el habla"],
+["¿Qué significa Arak Thalan?","nosotros hablamos"],
+["¿Qué significa Ar Zakar?","yo corro"],
+["¿Qué significa Tar Zakar?","tu corres"]
+],
+[
+["Ordena: Thalan Ar","ar thalan"],
+["Ordena: Thalan Tar","tar thalan"],
+["Ordena: Zakar Ar","ar zakar"],
+["Ordena: Zakar Tar","tar zakar"],
+["Traduce: yo corro","ar zakar"],
+["Traduce: tú corres","tar zakar"],
+["Traduce: nosotros hablamos","arak thalan"],
+["Traduce: él habla","uth thalan"],
+["Traduce: yo hablo","ar thalan"],
+["Traduce: tú hablas","tar thalan"]
+],
+[
+["Traduce: yo hablo hoy","ar thalan kethar"],
+["Traduce: yo hablo mañana","ar thalan mornek"],
+["Traduce: tú corres hoy","tar zakar kethar"],
+["Traduce: tú corres mañana","tar zakar mornek"],
+["¿Qué significa Ar Thalan Kethar?","yo hablo hoy"],
+["¿Qué significa Ar Thalan Mornek?","yo hablo mañana"],
+["¿Qué significa Tar Zakar Kethar?","tu corres hoy"],
+["¿Qué significa Tar Zakar Mornek?","tu corres mañana"],
+["Traduce: nosotros hablamos hoy","arak thalan kethar"],
+["Traduce: nosotros hablamos mañana","arak thalan mornek"]
+],
+[
+["Traduce: yo hablo con mi amigo","ar thalan daran"],
+["Traduce: tú hablas hoy","tar thalan kethar"],
+["Traduce: él corre mañana","uth zakar mornek"],
+["Traduce: nosotros hablamos hoy","arak thalan kethar"],
+["¿Qué significa Uth Zakar Mornek?","el corre mañana"],
+["¿Qué significa Ar Thalan Daran?","yo hablo amigo"],
+["¿Qué significa Tar Thalan Kethar?","tu hablas hoy"],
+["¿Qué significa Arak Thalan Mornek?","nosotros hablamos mañana"],
+["Traduce: yo corro mañana","ar zakar mornek"],
+["Traduce: tú hablas mañana","tar thalan mornek"]
+],
+[
+["Traduce: yo hablo hoy","ar thalan kethar"],
+["Traduce: tú corres mañana","tar zakar mornek"],
+["Traduce: nosotros hablamos hoy","arak thalan kethar"],
+["Traduce: él corre mañana","uth zakar mornek"],
+["Traduce: yo corro hoy","ar zakar kethar"],
+["Traduce: tú hablas hoy","tar thalan kethar"],
+["Traduce: nosotros hablamos mañana","arak thalan mornek"],
+["¿Qué significa Ar Thalan Kethar?","yo hablo hoy"],
+["¿Qué significa Tar Zakar Mornek?","tu corres mañana"],
+["¿Qué significa Arak Thalan Mornek?","nosotros hablamos mañana"]
 ]
 ];
+
 
 const nombresNiveles = [
 "Huevo de dragón","Aprendiz","Explorador","Guerrero",
