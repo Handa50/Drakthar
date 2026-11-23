@@ -111,6 +111,16 @@ footer{text-align:center;color:var(--muted);border-top:1px solid var(--line);pad
 .level-card button{width:100%}.exam-box h3{color:var(--gold2)}
 
 .lesson-summary{font-weight:bold;color:var(--gold2);margin:10px 0}.lesson-card{background:linear-gradient(145deg,rgba(36,44,56,.97),rgba(12,17,26,.97));border:1px solid var(--line);border-radius:12px;padding:15px}.lesson-card.locked{opacity:.55;filter:grayscale(.5)}.lesson-card h3{color:var(--gold2);margin:0 0 8px}.lesson-card p{color:var(--muted);font: .9rem/1.5 Arial,sans-serif}.lesson-card button{width:100%}.lesson-word{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-bottom:1px solid #8d744b55;font-family:Arial,sans-serif}.lesson-word strong{color:var(--gold2)}.lesson-example{padding:13px;background:#101a27;border:1px solid var(--line);border-radius:8px;margin:14px 0;color:#f3dfb7}.lesson-choices button{display:block;width:100%;text-align:left;margin:8px 0}
+
+/* Drakthar 7.0: categorías y sugerencias */
+.dictionary-tools{display:grid;grid-template-columns: minmax(0,1fr) minmax(190px,260px);gap:10px;margin-bottom:12px}
+.dictionary-tools input,.dictionary-tools select{width:100%;min-width:0;padding:13px;border:1px solid #8c7045;border-radius:8px;background:rgba(5,9,16,.9);color:var(--text);font:1rem Arial,sans-serif}
+.suggestions{display:none;gap:7px;flex-wrap:wrap;margin-top:9px;padding:10px;background:rgba(5,9,16,.88);border:1px solid var(--line);border-radius:8px}
+.suggestions.visible{display:flex}
+.suggestions button{margin:0;padding:8px 11px;font-size:.9rem}
+.suggestion-label{width:100%;font: .82rem Arial,sans-serif;color:var(--muted)}
+@media(max-width:600px){.dictionary-tools{grid-template-columns:1fr}}
+
 </style></head><body>
 <header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>ACADEMIA DRAKTHAR</h1><p>Escuela de lenguas antiguas y artes olvidadas. Aprende el idioma de los dragones, descifra runas y supera los desafíos de la academia.</p></header>
 <nav><a href="#progreso">⭐ Mi progreso</a><a href="#lecciones">📖 Lecciones</a><a href="#conversaciones">🗣️ Conversaciones</a><a href="#niveles">📚 Exámenes</a><a href="#diplomas">🎓 Diplomas</a><a href="#traductor">⚗ Traductor</a><a href="#diccionario">📜 Biblioteca</a><a href="#alfabeto">ᚱ Runas</a><a href="#reto">🏆 Pruebas</a><a href="#logros">🥇 Logros</a></nav>
@@ -131,10 +141,10 @@ footer{text-align:center;color:var(--muted);border-top:1px solid var(--line);pad
 <section id="niveles"><h2>📚 Camino de los 20 desafíos</h2><div class="levels" id="levelCards"></div><div class="exam-box" id="examArea"><p class="small">Elige un nivel disponible para comenzar su examen.</p></div></section>
 <section id="diplomas"><h2>🎓 Galería de diplomas</h2><div class="panel"><p class="small">Supera los exámenes para conseguir tus títulos. Cuando desbloquees uno, podrás imprimirlo.</p><label for="studentName">Nombre que aparecerá en los diplomas</label><input id="studentName" maxlength="40" placeholder="Escribe tu nombre"><div class="levels" id="diplomaCards"></div></div></section>
 
-<section id="traductor"><h2>⚔️ Traductor</h2><div class="panel"><label for="input">Español o Drakthar</label><textarea id="input" placeholder="Escribe aquí una frase..."></textarea><button id="toDrak">🇪🇸 → 🗿 Traducir a Drakthar</button><button id="toEs" class="secondary">🗿 → 🇪🇸 Traducir al español</button><button id="clear" class="secondary">Borrar</button></div>
+<section id="traductor"><h2>⚔️ Traductor</h2><div class="panel"><label for="input">Español o Drakthar</label><textarea id="input" placeholder="Escribe aquí una frase..."></textarea><div id="translatorSuggestions" class="suggestions" aria-live="polite"></div><button id="toDrak">🇪🇸 → 🗿 Traducir a Drakthar</button><button id="toEs" class="secondary">🗿 → 🇪🇸 Traducir al español</button><button id="clear" class="secondary">Borrar</button></div>
 <div class="panel"><label>Resultado</label><div id="output" class="result" aria-live="polite">Tu traducción aparecerá aquí…</div><button id="copy" class="secondary">Copiar</button><button id="speak" class="secondary">🔊 Escuchar pronunciación</button><div id="status" class="small"></div></div></section>
 <h2>🔥 Frases de ejemplo</h2><div class="examples"><button class="example" data-text="Hola amigo">Hola amigo</button><button class="example" data-text="Vamos juntos">Vamos juntos</button><button class="example" data-text="Viene el profesor">Viene el profesor</button><button class="example" data-text="Silencio">Silencio</button><button class="example" data-text="Nuestra fuerza">Nuestra fuerza</button><button class="example" data-text="Yo hablo">Yo hablo</button><button class="example" data-text="La luna y las estrellas">La luna y las estrellas</button><button class="example" data-text="¿Dónde está mi amigo?">¿Dónde está mi amigo?</button></div>
-<section id="diccionario"><h2>📚 Diccionario ampliado</h2><div class="panel"><input id="search" type="search" placeholder="Busca en español o Drakthar…"><div class="count" id="count"></div><div class="grid" id="dictionary"></div></div></section>
+<section id="diccionario"><h2>📚 Diccionario ampliado</h2><div class="panel"><div class="dictionary-tools"><input id="search" type="search" placeholder="Busca en español o Drakthar…"><select id="categoryFilter" aria-label="Filtrar por categoría"><option value="all">Todas las categorías</option></select></div><div class="count" id="count"></div><div class="grid" id="dictionary"></div></div></section>
 <section id="alfabeto"><h2>🗿 Alfabeto rúnico decorativo</h2><div class="panel"><p class="small">Estos símbolos son una capa visual inspirada en runas; no representan un sistema histórico propio ni una escritura fonética oficial del Drakthar.</p><div class="runegrid" id="runegrid"></div><label for="runeInput" style="margin-top:18px">Escribe una palabra para verla en símbolos</label><input id="runeInput" placeholder="Ejemplo: DRAKTHAR"><div class="result" id="runeOutput" style="margin-top:10px">ᛞ ᚱ ᚨ ᚲ ᛏ ᚺ ᚨ ᚱ</div></div></section>
 <section id="reto"><h2>🏆 Reto de aprendizaje</h2><div class="panel"><p id="quizQuestion">¿Qué significa “Tharek”?</p><div id="quizChoices"></div><div id="quizResult" class="small" aria-live="polite"></div><button id="nextQuiz" class="secondary">Siguiente reto</button></div></section>
 
@@ -163,13 +173,50 @@ function translate(text,reverse=false){
 }
 function doTranslate(reverse=false){const raw=document.getElementById('input').value.trim();const out=document.getElementById('output');if(!raw){out.textContent='Escribe una frase para empezar.';return;}out.textContent=translate(raw,reverse);document.getElementById('status').textContent='Traducción experimental: las palabras desconocidas se mantienen sin cambios.';}
 document.getElementById('toDrak').onclick=()=>doTranslate(false);document.getElementById('toEs').onclick=()=>doTranslate(true);
-document.getElementById('clear').onclick=()=>{document.getElementById('input').value='';document.getElementById('output').textContent='Tu traducción aparecerá aquí…';document.getElementById('status').textContent='';};
+// Sugerencias instantáneas: encuentra palabras por su forma española o Drakthar.
+const translatorInput=document.getElementById('input'),suggestionBox=document.getElementById('translatorSuggestions');
+function updateTranslatorSuggestions(){
+ const caret=translatorInput.selectionStart??translatorInput.value.length;
+ const before=translatorInput.value.slice(0,caret);const match=before.match(/[\p{L}]+$/u);const typed=match?match[0]:'';const query=norm(typed);
+ if(query.length<1){suggestionBox.classList.remove('visible');suggestionBox.innerHTML='';return;}
+ const matches=Object.entries(dict).filter(([es,dr])=>norm(es).startsWith(query)||norm(dr).startsWith(query));
+ const unique=[];const seen=new Set();for(const [es,dr] of matches){const key=norm(es)+'|'+norm(dr);if(!seen.has(key)){seen.add(key);unique.push({es,dr});}if(unique.length>=6)break;}
+ if(!unique.length){suggestionBox.classList.remove('visible');suggestionBox.innerHTML='';return;}
+ suggestionBox.innerHTML='<div class="suggestion-label">Sugerencias · pulsa una para completar</div>';
+ unique.forEach(item=>{const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent=item.es+' → '+item.dr;button.addEventListener('click',()=>{const start=caret-typed.length;const useDrak=norm(typed)!==''&&norm(item.dr).startsWith(query)&&!norm(item.es).startsWith(query);const replacement=useDrak?item.dr:item.es;translatorInput.setRangeText(replacement,start,caret,'end');translatorInput.focus();updateTranslatorSuggestions();});suggestionBox.append(button);});
+ suggestionBox.classList.add('visible');
+}
+translatorInput.addEventListener('input',updateTranslatorSuggestions);
+translatorInput.addEventListener('click',updateTranslatorSuggestions);
+translatorInput.addEventListener('keyup',e=>{if(!['ArrowUp','ArrowDown','Enter','Escape'].includes(e.key))updateTranslatorSuggestions();});
+translatorInput.addEventListener('keydown',e=>{if(e.key==='Escape'){suggestionBox.classList.remove('visible');}});
+
+document.getElementById('clear').onclick=()=>{document.getElementById('input').value='';suggestionBox.classList.remove('visible');suggestionBox.innerHTML='';document.getElementById('output').textContent='Tu traducción aparecerá aquí…';document.getElementById('status').textContent='';};
 document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(document.getElementById('output').textContent);document.getElementById('status').textContent='¡Copiado!';}catch(e){document.getElementById('status').textContent='Selecciona el resultado y cópialo.';}};
 document.getElementById('speak').onclick=()=>{if(!('speechSynthesis'in window)){document.getElementById('status').textContent='Tu navegador no admite lectura en voz alta.';return;}let u=new SpeechSynthesisUtterance(document.getElementById('output').textContent);u.lang='es-ES';u.rate=.82;speechSynthesis.speak(u);};
 document.querySelectorAll('.example').forEach(b=>b.onclick=()=>{document.getElementById('input').value=b.dataset.text;doTranslate(false);document.getElementById('traductor').scrollIntoView({behavior:'smooth'});});
-const dictionary=document.getElementById('dictionary'),search=document.getElementById('search');
-function renderDict(){const q=norm(search.value.trim());dictionary.innerHTML='';const rows=Object.entries(dict).filter(([es,dr])=>!q||norm(es).includes(q)||norm(dr).includes(q)).sort((a,b)=>a[0].localeCompare(b[0],'es'));document.getElementById('count').textContent=rows.length+' entradas';for(const [es,dr] of rows){const c=document.createElement('div');c.className='wordcard';const a=document.createElement('div');a.className='dw';a.textContent=dr;const b=document.createElement('div');b.className='dm';b.textContent=es;c.append(a,b);dictionary.append(c);}}
-search.addEventListener('input',renderDict);renderDict();
+const dictionary=document.getElementById('dictionary'),search=document.getElementById('search'),categoryFilter=document.getElementById('categoryFilter');
+// Clasificación temática automática a partir de las palabras españolas del diccionario.
+const categoryTerms={
+ 'Familia y personas':'familia madre padre hermano hermana abuelo abuela hijo hija primo prima tio tia amigo amiga enemigo persona personas hombre mujer niño niña bebé bebe profesor profesora rey reina guardia soldado',
+ 'Animales':'animal perro gato caballo lobo zorro oso leon león tigre dragon dragón pajaro pájaro ave pez serpiente aguila águila buho búho conejo rana insecto mariposa araña araña',
+ 'Fútbol y deportes':'futbol fútbol deporte partido balón balon equipo jugador portero defensa delantero entrenador campo gol golazo camiseta estadio arbitro árbitro carrera correr saltar nadar jugar',
+ 'Comida y bebida':'comida comer beber agua pan leche queso carne pescado fruta manzana naranja pera uva verdura arroz sopa huevo salchicha dulce azúcar azucar sal café cafe té te zumo jugo',
+ 'Naturaleza y lugares':'naturaleza montaña montana rio río mar bosque árbol arbol hoja flor planta semilla selva isla cueva cascada desierto pantano valle colina volcán volcan arena playa isla lago océano oceano tierra piedra aire fuego sol luna cielo estrella lluvia nieve viento trueno relámpago relampago tormenta huracán huracan terremoto glaciar',
+ 'Emociones y sentimientos':'feliz tristeza triste alegría alegria miedo esperanza rabia enfadado amor cariño sorpresa libertad cansado hambre sed orgullo vergüenza verguenza',
+ 'Verbos y acciones':'hablar decir mirar ver venir ir andar correr esperar querer tener hacer jugar comer beber dormir pensar saber entender escuchar oir oír callar preguntar responder aprender enseñar estudiar escribir leer cantar bailar construir destruir abrir cerrar saltar viajar',
+ 'Cualidades y adjetivos':'bien mal bueno buena malo genial mejor rápido rapido lento grande pequeño pequeno viejo nuevo fuerte valiente misterioso bonito feo listo lista amable divertido oscuro brillante alto bajo frío frio caliente fácil facil dificil difícil',
+ 'Objetos cotidianos':'casa puerta mesa silla libro calle ciudad reloj teléfono telefono ordenador computadora mochila lápiz lapiz papel cama ventana llave ropa zapato pelota balón balon herramienta coche bicicleta',
+ 'Música, arte y cultura':'música musica canción cancion arte dibujo pintura instrumento guitarra tambor baile danza teatro historia cuento leyenda cultura canción poema poesia poesía',
+ 'Espacio, ciencia e inventos':'universo galaxia planeta espacio estrella ciencia invento máquina maquina robot energía energia cristal metal oro plata hierro diamante portal magia hechizo poción pocion reliquia tecnología tecnologia laboratorio átomo atomo',
+ 'Tiempo y gramática':'hoy mañana manana ayer ahora después despues antes siempre nunca pronto tarde aquí aqui allí alli dentro fuera arriba abajo lejos cerca qué que quién quien dónde donde cuándo cuando cómo como cuánto cuanto uno dos tres cuatro cinco seis siete ocho nueve diez sí si no y o pero con sin en de a al el la los las un una mi mis tu tú él ella nosotros ellos'
+};
+const categoryNames=Object.keys(categoryTerms);
+function categoryOf(word){const w=norm(word);for(const name of categoryNames){const terms=categoryTerms[name].split(' ').map(norm);if(terms.includes(w))return name;}return 'Otros';}
+const categoryOptions=[...categoryNames,'Otros'];
+categoryOptions.forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;categoryFilter.append(option);});
+function renderDict(){const q=norm(search.value.trim()),cat=categoryFilter.value;dictionary.innerHTML='';const rows=Object.entries(dict).filter(([es,dr])=>(!q||norm(es).includes(q)||norm(dr).includes(q))&&(cat==='all'||categoryOf(es)===cat)).sort((a,b)=>a[0].localeCompare(b[0],'es'));document.getElementById('count').textContent=rows.length+' entradas · '+(cat==='all'?'todas las categorías':cat);for(const [es,dr] of rows){const c=document.createElement('div');c.className='wordcard';const a=document.createElement('div');a.className='dw';a.textContent=dr;const b=document.createElement('div');b.className='dm';b.textContent=es;c.append(a,b);dictionary.append(c);}}
+search.addEventListener('input',renderDict);categoryFilter.addEventListener('change',renderDict);renderDict();
 for(const [letter,symbol] of Object.entries(runes)){const d=document.createElement('div');d.className='runeitem';d.innerHTML='<div class="runesymbol"></div><div class="runeletter"></div>';d.children[0].textContent=symbol;d.children[1].textContent=letter;document.getElementById('runegrid').append(d);}
 function showRunes(){const s=document.getElementById('runeInput').value.toUpperCase();document.getElementById('runeOutput').textContent=[...s].map(c=>runes[c]||c).join(' ');}
 document.getElementById('runeInput').addEventListener('input',showRunes);
