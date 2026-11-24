@@ -121,10 +121,45 @@ footer{text-align:center;color:var(--muted);border-top:1px solid var(--line);pad
 .suggestion-label{width:100%;font: .82rem Arial,sans-serif;color:var(--muted)}
 @media(max-width:600px){.dictionary-tools{grid-template-columns:1fr}}
 
+
+/* DRAKTHAR 8.0: navegación por pantallas */
+#academyHome{display:block}
+#academyHome .home-intro{text-align:center;color:var(--muted);font:1rem/1.7 Arial,sans-serif}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:22px}
+.home-tile{min-height:118px;text-align:left;padding:18px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,rgba(65,47,29,.96),rgba(15,21,31,.98));color:var(--text);cursor:pointer}
+.home-tile .tile-icon{display:block;font-size:1.8rem;margin-bottom:9px}
+.home-tile strong{display:block;color:var(--gold2);font-size:1.05rem}
+.home-tile span:last-child{display:block;color:var(--muted);font: .85rem/1.4 Arial,sans-serif;margin-top:6px}
+.back-home{margin:0 0 18px}
+main.academy-home-mode>section:not(#academyHome),main.academy-home-mode>.academy-extra{display:none!important}
+main.academy-section-mode>section,main.academy-section-mode>.academy-extra{display:none!important}
+main.academy-section-mode>section.active-section,main.academy-section-mode>.academy-extra.active-section{display:block!important}
+#academyHome[hidden]{display:none!important}
+@media(max-width:600px){.home-grid{grid-template-columns:1fr 1fr}.home-tile{min-height:112px;padding:13px}}
+
 </style></head><body>
 <header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>ACADEMIA DRAKTHAR</h1><p>Escuela de lenguas antiguas y artes olvidadas. Aprende el idioma de los dragones, descifra runas y supera los desafíos de la academia.</p></header>
-<nav><a href="#progreso">⭐ Mi progreso</a><a href="#lecciones">📖 Lecciones</a><a href="#conversaciones">🗣️ Conversaciones</a><a href="#niveles">📚 Exámenes</a><a href="#diplomas">🎓 Diplomas</a><a href="#traductor">⚗ Traductor</a><a href="#diccionario">📜 Biblioteca</a><a href="#alfabeto">ᚱ Runas</a><a href="#reto">🏆 Pruebas</a><a href="#logros">🥇 Logros</a></nav>
-<main>
+<nav><a href="#inicio" id="homeNav">⌂ Inicio de la Academia</a></nav>
+<main id="academyMain" class="academy-home-mode">
+<section id="academyHome">
+  <h2>🐉 Bienvenido a la Academia Drakthar</h2>
+  <div class="panel">
+    <p class="home-intro">Tu aventura comienza aquí. Elige una sala para aprender, practicar y descubrir los secretos del idioma de los dragones.</p>
+    <div class="home-grid">
+      <button class="home-tile" data-target="progreso"><span class="tile-icon">⭐</span><strong>Mi progreso</strong><span>Consulta tus XP, rango y racha.</span></button>
+      <button class="home-tile" data-target="lecciones"><span class="tile-icon">📖</span><strong>Lecciones</strong><span>Aprende con las 50 lecciones.</span></button>
+      <button class="home-tile" data-target="conversaciones"><span class="tile-icon">🗣️</span><strong>Conversaciones</strong><span>Practica hablando con habitantes.</span></button>
+      <button class="home-tile" data-target="niveles"><span class="tile-icon">📚</span><strong>Exámenes</strong><span>Supera los 20 desafíos.</span></button>
+      <button class="home-tile" data-target="diplomas"><span class="tile-icon">🎓</span><strong>Diplomas</strong><span>Consigue e imprime tus títulos.</span></button>
+      <button class="home-tile" data-target="traductor"><span class="tile-icon">⚔️</span><strong>Traductor</strong><span>Traduce entre español y Drakthar.</span></button>
+      <button class="home-tile" data-target="diccionario"><span class="tile-icon">📜</span><strong>Biblioteca</strong><span>Busca palabras y filtra categorías.</span></button>
+      <button class="home-tile" data-target="alfabeto"><span class="tile-icon">ᚱ</span><strong>Runas</strong><span>Descubre y escribe con símbolos.</span></button>
+      <button class="home-tile" data-target="reto"><span class="tile-icon">🏆</span><strong>Pruebas</strong><span>Comprueba lo que has aprendido.</span></button>
+      <button class="home-tile" data-target="logros"><span class="tile-icon">🥇</span><strong>Logros</strong><span>Revisa tus medallas conseguidas.</span></button>
+    </div>
+  </div>
+</section>
+
 
 <section id="progreso"><h2>⭐ Tu aventura en Drakthar</h2>
 <div class="panel"><p id="rankName" class="small">Rango: Novato</p>
@@ -260,7 +295,41 @@ const diplomaTiers=[{id:'bronze',name:'Diploma de Bronce',icon:'🥉',needed:5},
 function renderDiplomas(){const root=document.getElementById('diplomaCards');if(!root)return;const input=document.getElementById('studentName');if(input&&document.activeElement!==input)input.value=save.diplomaName||'';root.innerHTML=diplomaTiers.map(d=>{const earned=save.passed.length>=d.needed;return `<div class="diploma-card ${earned?'':'locked'}"><h3>${d.icon} ${d.name}</h3><p>${earned?'¡Conseguido!':`Necesitas superar ${d.needed} exámenes (${Math.max(0,d.needed-save.passed.length)} más).`}</p><button ${earned?'':'disabled'} onclick="printDiploma('${d.id}')">${earned?'📜 Ver e imprimir':'🔒 Bloqueado'}</button></div>`}).join('');}
 document.getElementById('studentName').addEventListener('input',e=>{save.diplomaName=e.target.value;localStorage.setItem(SAVE_KEY,JSON.stringify(save));});
 window.printDiploma=function(id){const d=diplomaTiers.find(x=>x.id===id);if(!d||save.passed.length<d.needed)return;const name=(save.diplomaName||'Alumno de la Academia').replace(/[<>]/g,'');const win=window.open('','_blank');if(!win){alert('Permite las ventanas emergentes para imprimir el diploma.');return;}win.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${d.name}</title><style>body{margin:0;background:#f4ead2;font-family:Georgia,serif;color:#392914}.paper{margin:35px auto;padding:55px 35px;max-width:850px;min-height:480px;border:12px double #98713b;text-align:center;background:#fffaf0}.icon{font-size:64px}h1{font-size:42px;color:#76501f}h2{font-size:30px;margin:35px}p{font-size:20px;line-height:1.7}.name{font-size:34px;font-weight:bold;border-bottom:1px solid #98713b;display:inline-block;padding:8px 40px}.seal{margin-top:45px;font-size:18px}@media print{button{display:none}.paper{margin:0;max-width:none;min-height:90vh}}.level-card button{width:100%}.exam-box h3{color:var(--gold2)}
-</style></head><body><div class="paper"><div class="icon">${d.icon} 🐉</div><h1>ACADEMIA DRAKTHAR</h1><h2>${d.name}</h2><p>Se concede este diploma a</p><div class="name">${name}</div><p>por haber superado ${d.needed} exámenes y demostrar dedicación<br>en el aprendizaje de la lengua Drakthar.</p><div class="seal">✦ Escuela de lenguas antiguas y artes olvidadas ✦<br>Fecha: ${new Date().toLocaleDateString('es-ES')}</div><button onclick="window.print()">Imprimir diploma</button></div></body></html>`);win.document.close();};
+</style></head><body><div class="paper"><div class="icon">${d.icon} 🐉</div><h1>ACADEMIA DRAKTHAR</h1><h2>${d.name}</h2><p>Se concede este diploma a</p><div class="name">${name}</div><p>por haber superado ${d.needed} exámenes y demostrar dedicación<br>en el aprendizaje de la lengua Drakthar.</p><div class="seal">✦ Escuela de lenguas antiguas y artes olvidadas ✦<br>Fecha: ${new Date().toLocaleDateString('es-ES')}</div><button onclick="window.print()">Imprimir diploma</button></div>
+<script>
+(()=>{
+ const main=document.getElementById('academyMain');
+ const home=document.getElementById('academyHome');
+ const sections=[...main.querySelectorAll(':scope > section:not(#academyHome)')];
+ const examplesTitle=[...main.children].find(el=>el.matches('h2')&&el.textContent.includes('Frases de ejemplo'));
+ const examples=examplesTitle?.nextElementSibling;
+ if(examplesTitle&&examples?.classList.contains('examples')){
+   examplesTitle.classList.add('academy-extra');examples.classList.add('academy-extra');
+   document.getElementById('traductor').append(examplesTitle,examples);
+ }
+ const note=[...main.children].find(el=>el.matches('.panel.small'));
+ if(note){note.classList.add('academy-extra');document.getElementById('logros').append(note);}
+ function showHome(){
+   main.className='academy-home-mode';home.hidden=false;
+   sections.forEach(s=>{s.classList.remove('active-section');const b=s.querySelector('.back-home');if(b)b.remove();});
+   main.querySelectorAll('.academy-extra').forEach(x=>x.classList.remove('active-section'));
+   window.scrollTo({top:0,behavior:'smooth'});history.replaceState(null,'','#inicio');
+ }
+ function showSection(id){
+   const target=document.getElementById(id);if(!target||!sections.includes(target))return;
+   main.className='academy-section-mode';home.hidden=true;
+   sections.forEach(s=>s.classList.toggle('active-section',s===target));
+   main.querySelectorAll('.academy-extra').forEach(x=>x.classList.toggle('active-section',target.id==='traductor'&&x.parentElement===target||target.id==='logros'&&x.parentElement===target));
+   let back=target.querySelector('.back-home');if(!back){back=document.createElement('button');back.type='button';back.className='back-home secondary';back.textContent='← Volver al inicio';back.addEventListener('click',showHome);target.prepend(back);}
+   window.scrollTo({top:0,behavior:'smooth'});history.replaceState(null,'','#'+id);
+ }
+ main.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.target)));
+ document.getElementById('homeNav').addEventListener('click',e=>{e.preventDefault();showHome();});
+ window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(id==='inicio'||!id)showHome();else showSection(id);});
+ const initial=location.hash.slice(1);if(initial&&initial!=='inicio')showSection(initial);else showHome();
+})();
+</script>
+</body></html>`);win.document.close();};
 let currentExam=-1,examQuestion=0,examScore=0,examAnswered=false;
 window.startExam=function(i){if(i>0&&!save.passed.includes(i-1))return;currentExam=i;examQuestion=0;examScore=0;showExamQuestion();document.getElementById('examArea').scrollIntoView({behavior:'smooth',block:'center'});};
 function showExamQuestion(){const area=document.getElementById('examArea'),ex=exams[currentExam],q=ex.questions[examQuestion];examAnswered=false;area.innerHTML=`<h3>${ex.name}</h3><p>Pregunta ${examQuestion+1} de ${ex.questions.length}</p><p><strong>${q[0]}</strong></p><div id="examOptions"></div><div class="notice" id="examFeedback">Elige una respuesta.</div>`;const shuffledOptions=[...q[2]];for(let i=shuffledOptions.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffledOptions[i],shuffledOptions[j]]=[shuffledOptions[j],shuffledOptions[i]];}shuffledOptions.forEach(choice=>{const b=document.createElement('button');b.className='secondary exam-option';b.textContent=choice;b.onclick=()=>answerExam(choice);document.getElementById('examOptions').append(b);});}
