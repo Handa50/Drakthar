@@ -136,8 +136,18 @@ main.academy-section-mode>section,main.academy-section-mode>.academy-extra{displ
 main.academy-section-mode>section.active-section,main.academy-section-mode>.academy-extra.active-section{display:block!important}
 #academyHome[hidden]{display:none!important}
 @media(max-width:600px){.home-grid{grid-template-columns:1fr 1fr}.home-tile{min-height:112px;padding:13px}}
-</style></head><body>
-<header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>ACADEMIA DRAKTHAR</h1><p>Escuela de lenguas antiguas y artes olvidadas. Aprende el idioma de los dragones, descifra runas y supera los desafíos de la academia.</p></header>
+</style>
+/* DRAKTHAR 9.0: cuentas locales por navegador */
+body.auth-locked>header,body.auth-locked>nav,body.auth-locked>#academyMain,body.auth-locked>footer{visibility:hidden}
+#accountGate{display:none;position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at top,#352719,#080d16 72%);color:#f4e7c6;overflow:auto;padding:24px;align-items:center;justify-content:center}
+body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);padding:28px;border:1px solid #9e793e;border-radius:18px;background:linear-gradient(145deg,#202a37,#101722);box-shadow:0 18px 60px #0009}
+.account-card h2{text-align:center;color:#e5bd70;margin-top:0}.account-card p{color:#d5c9ae;line-height:1.5}.account-card label{display:block;margin:14px 0 6px}
+.account-card input{width:100%;padding:12px;border-radius:8px;border:1px solid #8b744d;background:#0d1420;color:white;font-size:1rem;box-sizing:border-box}
+.account-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.account-actions button,.account-logout{padding:12px;border:1px solid #b38a4c;border-radius:8px;background:#684b25;color:#fff2d2;font-weight:bold;cursor:pointer}
+#accountMessage{min-height:24px;margin-top:12px;color:#ffd58a;font-size:.92rem}.account-note{font-size:.82rem!important;color:#b9b2a4!important}
+#accountBadge{position:fixed;right:12px;bottom:12px;z-index:1000;background:#182333;border:1px solid #a17a40;color:#f4e7c6;padding:8px 12px;border-radius:10px;font-size:.85rem}
+</head><body class="auth-locked">
+<div id="accountGate" role="dialog" aria-modal="true" aria-labelledby="accountTitle"><div class="account-card"><h2 id="accountTitle">🐉 Academia Drakthar</h2><p>Entra en tu cuenta o crea una nueva para guardar tu propio progreso en este navegador.</p><label for="accountUsername">Nombre de usuario</label><input id="accountUsername" autocomplete="username" maxlength="20" placeholder="Tu nombre de alumno"><label for="accountPassword">Contraseña</label><input id="accountPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo 8 caracteres"><div class="account-actions"><button type="button" id="accountLogin">Iniciar sesión</button><button type="button" id="accountRegister">Crear cuenta</button></div><div id="accountMessage" aria-live="polite"></div><p class="account-note">Aviso: estas cuentas solo existen en este navegador y ordenador. No se sincronizan con otros dispositivos y no tienen recuperación de contraseña. No uses una contraseña que utilices en otros sitios. No es un sistema de seguridad para datos sensibles.</p></div></div><header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>ACADEMIA DRAKTHAR</h1><p>Escuela de lenguas antiguas y artes olvidadas. Aprende el idioma de los dragones, descifra runas y supera los desafíos de la academia.</p></header>
 <nav><a href="#inicio" id="homeNav">⌂ Inicio de la Academia</a></nav>
 <main id="academyMain" class="academy-home-mode">
 <section id="academyHome">
@@ -259,7 +269,7 @@ showQuiz();document.getElementById('nextQuiz').onclick=()=>{qi=(qi+1)%quizzes.le
 document.getElementById('input').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')doTranslate(false);});
 
 // SISTEMA DE PROGRESO, RANGOS, RACHA, NIVELES Y LOGROS
-const SAVE_KEY='drakthar_academy_v4';
+let SAVE_KEY='drakthar_academy_v4';
 const defaultSave={xp:0,passed:[],quizDone:[],badges:[],lastDay:'',streak:0,diplomaName:'',lessonsDone:[],conversationsDone:[]};
 let save;try{const previous=JSON.parse(localStorage.getItem(SAVE_KEY)||localStorage.getItem('drakthar_academy_v2')||'{}');save={...defaultSave,...previous,passed:[...new Set((previous.passed||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<20))]};localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){save={...defaultSave}}
 function saveGame(){localStorage.setItem(SAVE_KEY,JSON.stringify(save));renderGame();}
@@ -293,7 +303,17 @@ const diplomaTiers=[{id:'bronze',name:'Diploma de Bronce',icon:'🥉',needed:5},
 function renderDiplomas(){const root=document.getElementById('diplomaCards');if(!root)return;const input=document.getElementById('studentName');if(input&&document.activeElement!==input)input.value=save.diplomaName||'';root.innerHTML=diplomaTiers.map(d=>{const earned=save.passed.length>=d.needed;return `<div class="diploma-card ${earned?'':'locked'}"><h3>${d.icon} ${d.name}</h3><p>${earned?'¡Conseguido!':`Necesitas superar ${d.needed} exámenes (${Math.max(0,d.needed-save.passed.length)} más).`}</p><button ${earned?'':'disabled'} onclick="printDiploma('${d.id}')">${earned?'📜 Ver e imprimir':'🔒 Bloqueado'}</button></div>`}).join('');}
 document.getElementById('studentName').addEventListener('input',e=>{save.diplomaName=e.target.value;localStorage.setItem(SAVE_KEY,JSON.stringify(save));});
 window.printDiploma=function(id){const d=diplomaTiers.find(x=>x.id===id);if(!d||save.passed.length<d.needed)return;const name=(save.diplomaName||'Alumno de la Academia').replace(/[<>]/g,'');const win=window.open('','_blank');if(!win){alert('Permite las ventanas emergentes para imprimir el diploma.');return;}win.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${d.name}</title><style>body{margin:0;background:#f4ead2;font-family:Georgia,serif;color:#392914}.paper{margin:35px auto;padding:55px 35px;max-width:850px;min-height:480px;border:12px double #98713b;text-align:center;background:#fffaf0}.icon{font-size:64px}h1{font-size:42px;color:#76501f}h2{font-size:30px;margin:35px}p{font-size:20px;line-height:1.7}.name{font-size:34px;font-weight:bold;border-bottom:1px solid #98713b;display:inline-block;padding:8px 40px}.seal{margin-top:45px;font-size:18px}@media print{button{display:none}.paper{margin:0;max-width:none;min-height:90vh}}.level-card button{width:100%}.exam-box h3{color:var(--gold2)}
-</style></head><body><div class="paper"><div class="icon">${d.icon} 🐉</div><h1>ACADEMIA DRAKTHAR</h1><h2>${d.name}</h2><p>Se concede este diploma a</p><div class="name">${name}</div><p>por haber superado ${d.needed} exámenes y demostrar dedicación<br>en el aprendizaje de la lengua Drakthar.</p><div class="seal">✦ Escuela de lenguas antiguas y artes olvidadas ✦<br>Fecha: ${new Date().toLocaleDateString('es-ES')}</div><button onclick="window.print()">Imprimir diploma</button></div></body></html>`);win.document.close();};
+</style>
+/* DRAKTHAR 9.0: cuentas locales por navegador */
+body.auth-locked>header,body.auth-locked>nav,body.auth-locked>#academyMain,body.auth-locked>footer{visibility:hidden}
+#accountGate{display:none;position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at top,#352719,#080d16 72%);color:#f4e7c6;overflow:auto;padding:24px;align-items:center;justify-content:center}
+body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);padding:28px;border:1px solid #9e793e;border-radius:18px;background:linear-gradient(145deg,#202a37,#101722);box-shadow:0 18px 60px #0009}
+.account-card h2{text-align:center;color:#e5bd70;margin-top:0}.account-card p{color:#d5c9ae;line-height:1.5}.account-card label{display:block;margin:14px 0 6px}
+.account-card input{width:100%;padding:12px;border-radius:8px;border:1px solid #8b744d;background:#0d1420;color:white;font-size:1rem;box-sizing:border-box}
+.account-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.account-actions button,.account-logout{padding:12px;border:1px solid #b38a4c;border-radius:8px;background:#684b25;color:#fff2d2;font-weight:bold;cursor:pointer}
+#accountMessage{min-height:24px;margin-top:12px;color:#ffd58a;font-size:.92rem}.account-note{font-size:.82rem!important;color:#b9b2a4!important}
+#accountBadge{position:fixed;right:12px;bottom:12px;z-index:1000;background:#182333;border:1px solid #a17a40;color:#f4e7c6;padding:8px 12px;border-radius:10px;font-size:.85rem}
+</head><body class="auth-locked"><div class="paper"><div class="icon">${d.icon} 🐉</div><h1>ACADEMIA DRAKTHAR</h1><h2>${d.name}</h2><p>Se concede este diploma a</p><div class="name">${name}</div><p>por haber superado ${d.needed} exámenes y demostrar dedicación<br>en el aprendizaje de la lengua Drakthar.</p><div class="seal">✦ Escuela de lenguas antiguas y artes olvidadas ✦<br>Fecha: ${new Date().toLocaleDateString('es-ES')}</div><button onclick="window.print()">Imprimir diploma</button></div></body></html>`);win.document.close();};
 let currentExam=-1,examQuestion=0,examScore=0,examAnswered=false;
 window.startExam=function(i){if(i>0&&!save.passed.includes(i-1))return;currentExam=i;examQuestion=0;examScore=0;showExamQuestion();document.getElementById('examArea').scrollIntoView({behavior:'smooth',block:'center'});};
 function showExamQuestion(){const area=document.getElementById('examArea'),ex=exams[currentExam],q=ex.questions[examQuestion];examAnswered=false;area.innerHTML=`<h3>${ex.name}</h3><p>Pregunta ${examQuestion+1} de ${ex.questions.length}</p><p><strong>${q[0]}</strong></p><div id="examOptions"></div><div class="notice" id="examFeedback">Elige una respuesta.</div>`;const shuffledOptions=[...q[2]];for(let i=shuffledOptions.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffledOptions[i],shuffledOptions[j]]=[shuffledOptions[j],shuffledOptions[i]];}shuffledOptions.forEach(choice=>{const b=document.createElement('button');b.className='secondary exam-option';b.textContent=choice;b.onclick=()=>answerExam(choice);document.getElementById('examOptions').append(b);});}
@@ -423,4 +443,64 @@ renderConversations();
  window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(id==='inicio'||!id)showHome();else showSection(id);});
  const initial=location.hash.slice(1);if(initial&&initial!=='inicio')showSection(initial);else showHome();
 })();
-</script></body></html>
+</script><script>
+// Cuentas locales Drakthar 9.0. Las contraseñas se derivan con PBKDF2; no se guardan en texto plano.
+(()=>{
+ const USERS_KEY='drakthar_local_accounts_v1';
+ const gate=document.getElementById('accountGate');
+ const usernameEl=document.getElementById('accountUsername');
+ const passwordEl=document.getElementById('accountPassword');
+ const message=document.getElementById('accountMessage');
+ let currentUsername='';
+ const readUsers=()=>{try{return JSON.parse(localStorage.getItem(USERS_KEY)||'{}')}catch{return {}}};
+ const writeUsers=u=>localStorage.setItem(USERS_KEY,JSON.stringify(u));
+ const cleanName=v=>v.trim().toLowerCase();
+ const bytesToHex=b=>Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+ async function passwordHash(password,saltHex){
+  const salt=saltHex?new Uint8Array(saltHex.match(/.{2}/g).map(x=>parseInt(x,16))):crypto.getRandomValues(new Uint8Array(16));
+  const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},material,256);
+  return {hash:bytesToHex(bits),salt:bytesToHex(salt)};
+ }
+ function showMessage(t){message.textContent=t;}
+ function loadAccount(name){
+  currentUsername=name; SAVE_KEY='drakthar_progress_'+name;
+  try{save={...defaultSave,...JSON.parse(localStorage.getItem(SAVE_KEY)||'{}')};}catch{save={...defaultSave};}
+  localStorage.setItem(SAVE_KEY,JSON.stringify(save));
+  document.body.classList.remove('auth-locked');
+  gate.style.display='none';
+  let badge=document.getElementById('accountBadge');
+  if(!badge){badge=document.createElement('div');badge.id='accountBadge';document.body.appendChild(badge);}
+  badge.innerHTML='👤 '+name+' · <button type="button" id="accountLogout" class="account-logout">Cerrar sesión</button>';
+  document.getElementById('accountLogout').addEventListener('click',logout);
+  if(typeof renderGame==='function')renderGame();
+  if(typeof renderLessons==='function')renderLessons();
+  if(typeof renderConversations==='function')renderConversations();
+  if(typeof renderLevels==='function')renderLevels();
+  if(typeof renderDiplomas==='function')renderDiplomas();
+  if(typeof renderBadges==='function')renderBadges();
+ }
+ function logout(){currentUsername='';document.getElementById('accountBadge')?.remove();document.body.classList.add('auth-locked');gate.style.display='flex';passwordEl.value='';showMessage('Has cerrado sesión.');}
+ async function register(){
+  const raw=usernameEl.value.trim(),name=cleanName(raw),password=passwordEl.value;
+  if(!/^[a-zA-Z0-9_-]{3,20}$/.test(raw)){showMessage('El usuario debe tener entre 3 y 20 caracteres: letras, números, guion o guion bajo.');return;}
+  if(password.length<8){showMessage('La contraseña debe tener al menos 8 caracteres.');return;}
+  const users=readUsers();if(users[name]){showMessage('Ese nombre de usuario ya existe. Prueba otro.');return;}
+  if(!window.crypto?.subtle){showMessage('Este navegador no permite crear la cuenta aquí. Abre la web desde GitHub Pages con HTTPS.');return;}
+  try{const derived=await passwordHash(password);users[name]={salt:derived.salt,hash:derived.hash,createdAt:new Date().toISOString()};writeUsers(users);loadAccount(name);}
+  catch(e){showMessage('No se pudo crear la cuenta. Comprueba que la web está abierta con HTTPS.');}
+ }
+ async function login(){
+  const name=cleanName(usernameEl.value),password=passwordEl.value,users=readUsers(),user=users[name];
+  if(!user){showMessage('No encuentro esa cuenta en este navegador.');return;}
+  if(!window.crypto?.subtle){showMessage('Este navegador no permite iniciar sesión aquí. Abre la web desde GitHub Pages con HTTPS.');return;}
+  try{const derived=await passwordHash(password,user.salt);if(derived.hash!==user.hash){showMessage('Contraseña incorrecta.');return;}loadAccount(name);}
+  catch(e){showMessage('No se pudo iniciar sesión. Inténtalo de nuevo.');}
+ }
+ document.getElementById('accountRegister').addEventListener('click',register);
+ document.getElementById('accountLogin').addEventListener('click',login);
+ passwordEl.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+ usernameEl.addEventListener('keydown',e=>{if(e.key==='Enter')passwordEl.focus();});
+})();
+</script>
+</body></html>
