@@ -136,7 +136,6 @@ main.academy-section-mode>section,main.academy-section-mode>.academy-extra{displ
 main.academy-section-mode>section.active-section,main.academy-section-mode>.academy-extra.active-section{display:block!important}
 #academyHome[hidden]{display:none!important}
 @media(max-width:600px){.home-grid{grid-template-columns:1fr 1fr}.home-tile{min-height:112px;padding:13px}}
-</style>
 /* DRAKTHAR 9.0: cuentas locales por navegador */
 body.auth-locked>header,body.auth-locked>nav,body.auth-locked>#academyMain,body.auth-locked>footer{visibility:hidden}
 #accountGate{display:none;position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at top,#352719,#080d16 72%);color:#f4e7c6;overflow:auto;padding:24px;align-items:center;justify-content:center}
@@ -146,6 +145,7 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
 .account-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.account-actions button,.account-logout{padding:12px;border:1px solid #b38a4c;border-radius:8px;background:#684b25;color:#fff2d2;font-weight:bold;cursor:pointer}
 #accountMessage{min-height:24px;margin-top:12px;color:#ffd58a;font-size:.92rem}.account-note{font-size:.82rem!important;color:#b9b2a4!important}
 #accountBadge{position:fixed;right:12px;bottom:12px;z-index:1000;background:#182333;border:1px solid #a17a40;color:#f4e7c6;padding:8px 12px;border-radius:10px;font-size:.85rem}
+</style>
 </head><body class="auth-locked">
 <div id="accountGate" role="dialog" aria-modal="true" aria-labelledby="accountTitle"><div class="account-card"><h2 id="accountTitle">🐉 Academia Drakthar</h2><p>Entra en tu cuenta o crea una nueva para guardar tu propio progreso en este navegador.</p><label for="accountUsername">Nombre de usuario</label><input id="accountUsername" autocomplete="username" maxlength="20" placeholder="Tu nombre de alumno"><label for="accountPassword">Contraseña</label><input id="accountPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo 8 caracteres"><div class="account-actions"><button type="button" id="accountLogin">Iniciar sesión</button><button type="button" id="accountRegister">Crear cuenta</button></div><div id="accountMessage" aria-live="polite"></div><p class="account-note">Aviso: estas cuentas solo existen en este navegador y ordenador. No se sincronizan con otros dispositivos y no tienen recuperación de contraseña. No uses una contraseña que utilices en otros sitios. No es un sistema de seguridad para datos sensibles.</p></div></div><header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>ACADEMIA DRAKTHAR</h1><p>Escuela de lenguas antiguas y artes olvidadas. Aprende el idioma de los dragones, descifra runas y supera los desafíos de la academia.</p></header>
 <nav><a href="#inicio" id="homeNav">⌂ Inicio de la Academia</a></nav>
