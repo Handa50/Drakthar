@@ -145,6 +145,13 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
 .account-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.account-actions button,.account-logout{padding:12px;border:1px solid #b38a4c;border-radius:8px;background:#684b25;color:#fff2d2;font-weight:bold;cursor:pointer}
 #accountMessage{min-height:24px;margin-top:12px;color:#ffd58a;font-size:.92rem}.account-note{font-size:.82rem!important;color:#b9b2a4!important}
 #accountBadge{position:fixed;right:12px;bottom:12px;z-index:1000;background:#182333;border:1px solid #a17a40;color:#f4e7c6;padding:8px 12px;border-radius:10px;font-size:.85rem}
+
+/* DRAKTHAR 11.0: perfil del estudiante */
+.profile-hero{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:linear-gradient(135deg,rgba(91,62,30,.65),rgba(12,19,29,.95));border:1px solid var(--line);border-radius:14px;padding:20px;margin:14px 0}
+.profile-avatar{width:88px;height:88px;display:grid;place-items:center;border-radius:50%;font-size:3.3rem;background:#101722;border:2px solid var(--gold);box-shadow:0 0 22px #d69b4a44}
+.profile-name{font-size:1.55rem;color:var(--gold2);font-weight:bold}.profile-subtitle{color:var(--muted);font: .92rem/1.5 Arial,sans-serif;margin-top:5px}
+.avatar-choices{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.avatar-choice{font-size:1.55rem;min-width:54px;padding:8px;background:#182333;color:white;border:1px solid var(--line)}.avatar-choice.selected{outline:2px solid var(--gold2);background:#574022}
+.profile-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-top:14px}.profile-stat{padding:14px;border:1px solid var(--line);border-radius:9px;background:#0b111c;text-align:center}.profile-stat strong{display:block;color:var(--gold2);font-size:1.5rem}.profile-stat span{color:var(--muted);font: .82rem Arial,sans-serif}
 </style>
 </head><body class="auth-locked">
 <div id="accountGate" role="dialog" aria-modal="true" aria-labelledby="accountTitle"><div class="account-card"><h2 id="accountTitle">🐉 Academia Drakthar</h2><p>Entra en tu cuenta o crea una nueva para guardar tu progreso y continuar desde otros dispositivos.</p><label for="accountUsername">Nombre de usuario</label><input id="accountUsername" autocomplete="username" maxlength="20" placeholder="Tu nombre de alumno"><label for="accountPassword">Contraseña</label><input id="accountPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo 8 caracteres"><div class="account-actions"><button type="button" id="accountLogin">Iniciar sesión</button><button type="button" id="accountRegister">Crear cuenta</button></div><div id="accountMessage" aria-live="polite"></div><p class="account-note">Tu cuenta y tu progreso se guardan en el servidor de la Academia. No compartas tu contraseña. No uses una contraseña que utilices en otros sitios. No es un sistema de seguridad para datos sensibles.</p></div></div><header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>ACADEMIA DRAKTHAR</h1><p>Escuela de lenguas antiguas y artes olvidadas. Aprende el idioma de los dragones, descifra runas y supera los desafíos de la academia.</p></header>
@@ -155,6 +162,7 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
   <div class="panel">
     <p class="home-intro">Tu aventura comienza aquí. Elige una sala para aprender, practicar y descubrir los secretos del idioma de los dragones.</p>
     <div class="home-grid">
+      <button class="home-tile" data-target="perfil"><span class="tile-icon">👤</span><strong>Mi perfil</strong><span>Tu avatar, nivel y estadísticas.</span></button>
       <button class="home-tile" data-target="progreso"><span class="tile-icon">⭐</span><strong>Mi progreso</strong><span>Consulta tus XP, rango y racha.</span></button>
       <button class="home-tile" data-target="lecciones"><span class="tile-icon">📖</span><strong>Lecciones</strong><span>Aprende con las 50 lecciones.</span></button>
       <button class="home-tile" data-target="conversaciones"><span class="tile-icon">🗣️</span><strong>Conversaciones</strong><span>Practica hablando con habitantes.</span></button>
@@ -169,6 +177,12 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
   </div>
 </section>
 
+
+<section id="perfil"><h2>👤 Perfil del estudiante</h2><div class="panel">
+ <div class="profile-hero"><div class="profile-avatar" id="profileAvatar">🐉</div><div><div class="profile-name" id="profileName">Alumno de Drakthar</div><div class="profile-subtitle" id="profileRank">Rango: Novato · Miembro de la Academia</div></div></div>
+ <h3 style="color:var(--gold2)">Elige tu avatar</h3><p class="small">Selecciona el emblema que te representará en la Academia. Se guardará en tu cuenta.</p><div class="avatar-choices" id="avatarChoices"></div>
+ <div class="profile-stats"><div class="profile-stat"><strong id="profileXP">0</strong><span>⭐ XP acumulados</span></div><div class="profile-stat"><strong id="profileLessons">0/50</strong><span>📖 Lecciones</span></div><div class="profile-stat"><strong id="profileExams">0/20</strong><span>📚 Exámenes</span></div><div class="profile-stat"><strong id="profileAchievements">0</strong><span>🏅 Logros</span></div><div class="profile-stat"><strong id="profileStreak">0</strong><span>🔥 Días de racha</span></div><div class="profile-stat"><strong id="profileDiplomas">0/4</strong><span>🎓 Diplomas</span></div></div>
+ </div></section>
 <section id="progreso"><h2>⭐ Tu aventura en Drakthar</h2>
 <div class="panel"><p id="rankName" class="small">Rango: Novato</p>
 <div class="dashboard">
@@ -270,7 +284,8 @@ document.getElementById('input').addEventListener('keydown',e=>{if((e.ctrlKey||e
 
 // SISTEMA DE PROGRESO, RANGOS, RACHA, NIVELES Y LOGROS
 let SAVE_KEY='drakthar_academy_v4';
-const defaultSave={xp:0,passed:[],quizDone:[],badges:[],lastDay:'',streak:0,diplomaName:'',lessonsDone:[],conversationsDone:[]};
+let activeStudentName='Alumno de Drakthar';
+const defaultSave={xp:0,passed:[],quizDone:[],badges:[],lastDay:'',streak:0,diplomaName:'',lessonsDone:[],conversationsDone:[],avatar:'🐉'};
 let save;try{const previous=JSON.parse(localStorage.getItem(SAVE_KEY)||localStorage.getItem('drakthar_academy_v2')||'{}');save={...defaultSave,...previous,passed:[...new Set((previous.passed||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<20))]};localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){save={...defaultSave}}
 function saveGame(){localStorage.setItem(SAVE_KEY,JSON.stringify(save));renderGame();if(window.draktharCloudSave)window.draktharCloudSave();}
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -280,6 +295,19 @@ function addXP(n){save.xp+=n;registerStudy();if(save.xp>=100)unlockBadge('centen
 const ranks=[{name:'Novato',min:0},{name:'Aprendiz',min:50},{name:'Explorador',min:150},{name:'Guerrero',min:300},{name:'Maestro',min:500},{name:'Leyenda',min:800}];
 const badgeInfo=[['primera','📖','Primera lección','Completa tu primer reto.'],['centenario','💯','Centenario','Alcanza 100 XP.'],['examen','🎓','Primer diploma','Aprueba tu primer examen.'],['racha3','🔥','Constancia','Estudia 3 días seguidos.'],['leyenda','👑','Leyenda','Supera los 20 exámenes de la Academia.']];
 function unlockBadge(id){if(!save.badges.includes(id))save.badges.push(id)}
+
+const studentAvatars=['🐉','🐲','🦅','🐺','🦊','🦉','🦁','🐻'];
+function renderProfile(){
+ const rank=[...ranks].reverse().find(r=>save.xp>=r.min)||ranks[0];
+ const avatar=save.avatar||'🐉';
+ const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+ put('profileAvatar',avatar);put('profileName',activeStudentName);put('profileRank','Rango: '+rank.name+' · Miembro de la Academia');
+ put('profileXP',save.xp||0);put('profileLessons',(save.lessonsDone||[]).length+'/50');put('profileExams',(save.passed||[]).length+'/20');put('profileAchievements',(save.badges||[]).length);put('profileStreak',save.streak||0);
+ const earned=[5,10,15,20].filter(n=>(save.passed||[]).length>=n).length;put('profileDiplomas',earned+'/4');
+ const choices=document.getElementById('avatarChoices');
+ if(choices){choices.innerHTML='';studentAvatars.forEach(icon=>{const b=document.createElement('button');b.type='button';b.className='avatar-choice'+(icon===avatar?' selected':'');b.textContent=icon;b.title='Elegir avatar '+icon;b.setAttribute('aria-pressed',icon===avatar?'true':'false');b.addEventListener('click',()=>{save.avatar=icon;saveGame();renderProfile();});choices.append(b);});}
+}
+
 function renderGame(){
  const rank=[...ranks].reverse().find(r=>save.xp>=r.min)||ranks[0];
  const next=ranks.find(r=>r.min>save.xp);
@@ -292,6 +320,7 @@ function renderGame(){
  const base=rank.min, end=next?next.min:rank.min;
  document.getElementById('xpBar').style.width=(next?Math.max(0,Math.min(100,(save.xp-base)/(end-base)*100)):100)+'%';
  document.getElementById('streakMessage').textContent=save.lastDay===todayKey()?'¡Ya has estudiado hoy! Vuelve mañana para mantener la racha.':'Haz una actividad hoy para iniciar o mantener tu racha.';
+ renderProfile();
  document.getElementById('badgeGrid').innerHTML=badgeInfo.map(([id,icon,name,desc])=>`<div class="badge ${save.badges.includes(id)?'':'locked'}"><div class="medal">${icon}</div><strong>${name}</strong><div class="small">${save.badges.includes(id)?desc:'🔒 '+desc}</div></div>`).join('');
  renderLevels();
  renderDiplomas();
@@ -304,15 +333,6 @@ function renderDiplomas(){const root=document.getElementById('diplomaCards');if(
 document.getElementById('studentName').addEventListener('input',e=>{save.diplomaName=e.target.value;localStorage.setItem(SAVE_KEY,JSON.stringify(save));if(window.draktharCloudSave)window.draktharCloudSave();});
 window.printDiploma=function(id){const d=diplomaTiers.find(x=>x.id===id);if(!d||save.passed.length<d.needed)return;const name=(save.diplomaName||'Alumno de la Academia').replace(/[<>]/g,'');const win=window.open('','_blank');if(!win){alert('Permite las ventanas emergentes para imprimir el diploma.');return;}win.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${d.name}</title><style>body{margin:0;background:#f4ead2;font-family:Georgia,serif;color:#392914}.paper{margin:35px auto;padding:55px 35px;max-width:850px;min-height:480px;border:12px double #98713b;text-align:center;background:#fffaf0}.icon{font-size:64px}h1{font-size:42px;color:#76501f}h2{font-size:30px;margin:35px}p{font-size:20px;line-height:1.7}.name{font-size:34px;font-weight:bold;border-bottom:1px solid #98713b;display:inline-block;padding:8px 40px}.seal{margin-top:45px;font-size:18px}@media print{button{display:none}.paper{margin:0;max-width:none;min-height:90vh}}.level-card button{width:100%}.exam-box h3{color:var(--gold2)}
 </style>
-/* DRAKTHAR 9.0: cuentas locales por navegador */
-body.auth-locked>header,body.auth-locked>nav,body.auth-locked>#academyMain,body.auth-locked>footer{visibility:hidden}
-#accountGate{display:none;position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at top,#352719,#080d16 72%);color:#f4e7c6;overflow:auto;padding:24px;align-items:center;justify-content:center}
-body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);padding:28px;border:1px solid #9e793e;border-radius:18px;background:linear-gradient(145deg,#202a37,#101722);box-shadow:0 18px 60px #0009}
-.account-card h2{text-align:center;color:#e5bd70;margin-top:0}.account-card p{color:#d5c9ae;line-height:1.5}.account-card label{display:block;margin:14px 0 6px}
-.account-card input{width:100%;padding:12px;border-radius:8px;border:1px solid #8b744d;background:#0d1420;color:white;font-size:1rem;box-sizing:border-box}
-.account-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.account-actions button,.account-logout{padding:12px;border:1px solid #b38a4c;border-radius:8px;background:#684b25;color:#fff2d2;font-weight:bold;cursor:pointer}
-#accountMessage{min-height:24px;margin-top:12px;color:#ffd58a;font-size:.92rem}.account-note{font-size:.82rem!important;color:#b9b2a4!important}
-#accountBadge{position:fixed;right:12px;bottom:12px;z-index:1000;background:#182333;border:1px solid #a17a40;color:#f4e7c6;padding:8px 12px;border-radius:10px;font-size:.85rem}
 </head><body class="auth-locked"><div class="paper"><div class="icon">${d.icon} 🐉</div><h1>ACADEMIA DRAKTHAR</h1><h2>${d.name}</h2><p>Se concede este diploma a</p><div class="name">${name}</div><p>por haber superado ${d.needed} exámenes y demostrar dedicación<br>en el aprendizaje de la lengua Drakthar.</p><div class="seal">✦ Escuela de lenguas antiguas y artes olvidadas ✦<br>Fecha: ${new Date().toLocaleDateString('es-ES')}</div><button onclick="window.print()">Imprimir diploma</button></div></body></html>`);win.document.close();};
 let currentExam=-1,examQuestion=0,examScore=0,examAnswered=false;
 window.startExam=function(i){if(i>0&&!save.passed.includes(i-1))return;currentExam=i;examQuestion=0;examScore=0;showExamQuestion();document.getElementById('examArea').scrollIntoView({behavior:'smooth',block:'center'});};
@@ -479,7 +499,8 @@ renderConversations();
     lessonsDone:Array.isArray(save.lessonsDone)?save.lessonsDone:[],
     conversationsDone:Array.isArray(save.conversationsDone)?save.conversationsDone:[],
     diplomaName:save.diplomaName||'',
-    lastDay:save.lastDay||''
+    lastDay:save.lastDay||'',
+    avatar:save.avatar||'🐉'
    },
    logros:Array.isArray(save.badges)?save.badges:[],
    racha:Number(save.streak)||0
@@ -495,6 +516,7 @@ renderConversations();
    conversationsDone:Array.isArray(lessons.conversationsDone)?lessons.conversationsDone:[],
    diplomaName:lessons.diplomaName||'',
    lastDay:lessons.lastDay||'',
+   avatar:lessons.avatar||'🐉',
    badges:Array.isArray(record?.logros)?record.logros:[],
    streak:Number(record?.racha)||0
   };
@@ -526,13 +548,13 @@ renderConversations();
  }
  window.draktharCloudSave=queueCloudSave;
  async function activateAccount(record,token,name){
-  authToken=token;authUser=record;progressRecordId=null;
+  authToken=token;authUser=record;activeStudentName=name;progressRecordId=null;
   SAVE_KEY=localSaveKey(name);
   const local=readLocalProgress(name);
   const remote=await fetchProgress(record.id);
   if(remote){progressRecordId=remote.id;unpackProgress(remote);}
   else{
-   save={...defaultSave,...local,passed:Array.isArray(local.passed)?local.passed:[],quizDone:Array.isArray(local.quizDone)?local.quizDone:[],badges:Array.isArray(local.badges)?local.badges:[],lessonsDone:Array.isArray(local.lessonsDone)?local.lessonsDone:[],conversationsDone:Array.isArray(local.conversationsDone)?local.conversationsDone:[]};
+   save={...defaultSave,...local,passed:Array.isArray(local.passed)?local.passed:[],quizDone:Array.isArray(local.quizDone)?local.quizDone:[],badges:Array.isArray(local.badges)?local.badges:[],lessonsDone:Array.isArray(local.lessonsDone)?local.lessonsDone:[],conversationsDone:Array.isArray(local.conversationsDone)?local.conversationsDone:[],avatar:local.avatar||'🐉'};
    await uploadProgress();
   }
   localStorage.setItem(SAVE_KEY,JSON.stringify(save));
@@ -547,6 +569,7 @@ renderConversations();
   if(typeof renderLevels==='function')renderLevels();
   if(typeof renderDiplomas==='function')renderDiplomas();
   if(typeof renderBadges==='function')renderBadges();
+  renderProfile();
   showMessage('Sesión iniciada. Tu progreso se sincroniza con tu cuenta.');
  }
  function logout(){
