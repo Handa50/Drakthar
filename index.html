@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Academia Drakthar — Escuela de lenguas antiguas</title>
+<title>Academia Drakthar 12.0 — Escuela de lenguas antiguas</title>
 <style>
 
 :root{
@@ -146,7 +146,7 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
 #accountMessage{min-height:24px;margin-top:12px;color:#ffd58a;font-size:.92rem}.account-note{font-size:.82rem!important;color:#b9b2a4!important}
 #accountBadge{position:fixed;right:12px;bottom:12px;z-index:1000;background:#182333;border:1px solid #a17a40;color:#f4e7c6;padding:8px 12px;border-radius:10px;font-size:.85rem}
 
-/* DRAKTHAR 11.0: perfil del estudiante */
+/* DRAKTHAR 12.0: amigos y perfil del estudiante */
 .profile-hero{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:linear-gradient(135deg,rgba(91,62,30,.65),rgba(12,19,29,.95));border:1px solid var(--line);border-radius:14px;padding:20px;margin:14px 0}
 .profile-avatar{width:88px;height:88px;display:grid;place-items:center;border-radius:50%;font-size:3.3rem;background:#101722;border:2px solid var(--gold);box-shadow:0 0 22px #d69b4a44}
 .profile-name{font-size:1.55rem;color:var(--gold2);font-weight:bold}.profile-subtitle{color:var(--muted);font: .92rem/1.5 Arial,sans-serif;margin-top:5px}
@@ -163,6 +163,7 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
     <p class="home-intro">Tu aventura comienza aquí. Elige una sala para aprender, practicar y descubrir los secretos del idioma de los dragones.</p>
     <div class="home-grid">
       <button class="home-tile" data-target="perfil"><span class="tile-icon">👤</span><strong>Mi perfil</strong><span>Tu avatar, nivel y estadísticas.</span></button>
+      <button class="home-tile" data-target="amigos"><span class="tile-icon">🤝</span><strong>Amigos</strong><span>Busca compañeros y envía solicitudes.</span></button>
       <button class="home-tile" data-target="progreso"><span class="tile-icon">⭐</span><strong>Mi progreso</strong><span>Consulta tus XP, rango y racha.</span></button>
       <button class="home-tile" data-target="lecciones"><span class="tile-icon">📖</span><strong>Lecciones</strong><span>Aprende con las 50 lecciones.</span></button>
       <button class="home-tile" data-target="conversaciones"><span class="tile-icon">🗣️</span><strong>Conversaciones</strong><span>Practica hablando con habitantes.</span></button>
@@ -178,6 +179,14 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
 </section>
 
 
+<section id="amigos"><h2>🤝 Amigos de la Academia</h2><div class="panel">
+ <p class="small">Busca a otro alumno por su nombre de usuario. Podrás enviar solicitudes, aceptar invitaciones y ver tus amistades.</p>
+ <label for="friendSearch">Buscar alumno</label><input id="friendSearch" maxlength="20" placeholder="Nombre exacto de usuario">
+ <button type="button" id="friendSearchButton">Buscar</button><div id="friendSearchResults" class="small" aria-live="polite"></div>
+ <h3 style="color:var(--gold2);margin-top:26px">📨 Solicitudes recibidas</h3><div id="friendIncoming" class="small">Cargando…</div>
+ <h3 style="color:var(--gold2);margin-top:26px">📤 Solicitudes enviadas</h3><div id="friendOutgoing" class="small">Cargando…</div>
+ <h3 style="color:var(--gold2);margin-top:26px">⭐ Mis amigos</h3><div id="friendList" class="small">Cargando…</div>
+ </div></section>
 <section id="perfil"><h2>👤 Perfil del estudiante</h2><div class="panel">
  <div class="profile-hero"><div class="profile-avatar" id="profileAvatar">🐉</div><div><div class="profile-name" id="profileName">Alumno de Drakthar</div><div class="profile-subtitle" id="profileRank">Rango: Novato · Miembro de la Academia</div></div></div>
  <h3 style="color:var(--gold2)">Elige tu avatar</h3><p class="small">Selecciona el emblema que te representará en la Academia. Se guardará en tu cuenta.</p><div class="avatar-choices" id="avatarChoices"></div>
@@ -458,7 +467,7 @@ renderConversations();
    let back=target.querySelector('.back-home');if(!back){back=document.createElement('button');back.type='button';back.className='back-home secondary';back.textContent='← Volver al inicio';back.addEventListener('click',showHome);target.prepend(back);}
    window.scrollTo({top:0,behavior:'smooth'});history.replaceState(null,'','#'+id);
  }
- main.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.target)));
+ main.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>{showSection(b.dataset.target);if(b.dataset.target==='amigos'&&window.draktharRenderFriends)window.draktharRenderFriends();}));
  document.getElementById('homeNav').addEventListener('click',e=>{e.preventDefault();showHome();});
  window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(id==='inicio'||!id)showHome();else showSection(id);});
  const initial=location.hash.slice(1);if(initial&&initial!=='inicio')showSection(initial);else showHome();
@@ -547,9 +556,79 @@ renderConversations();
   saveTimer=setTimeout(uploadProgress,700);
  }
  window.draktharCloudSave=queueCloudSave;
+ async function profileFor(userId){
+  const filter=encodeURIComponent('usuario = "'+userId+'"');
+  const r=await api('/api/collections/perfiles/records?filter='+filter+'&perPage=1');
+  return r.items?.[0]||null;
+ }
+ async function ensurePublicProfile(){
+  const existing=await profileFor(authUser.id);
+  if(!existing){await api('/api/collections/perfiles/records',{method:'POST',body:JSON.stringify({usuario:authUser.id,username:authUser.username||activeStudentName})});}
+ }
+ async function friendRecords(){
+  const f=encodeURIComponent('(solicitante = "'+authUser.id+'" || destinatario = "'+authUser.id+'")');
+  const r=await api('/api/collections/amistades/records?filter='+f+'&perPage=200&sort=-created');
+  return r.items||[];
+ }
+ async function profileName(userId){
+  const p=await profileFor(userId);return p?.username||'Alumno';
+ }
+ async function renderFriends(){
+  if(!authUser||!authToken)return;
+  const incoming=document.getElementById('friendIncoming'),outgoing=document.getElementById('friendOutgoing'),list=document.getElementById('friendList');
+  try{
+   const records=await friendRecords();
+   const received=records.filter(r=>r.estado==='pendiente'&&r.destinatario===authUser.id);
+   const sent=records.filter(r=>r.estado==='pendiente'&&r.solicitante===authUser.id);
+   const accepted=records.filter(r=>r.estado==='aceptada');
+   incoming.innerHTML='';outgoing.innerHTML='';list.innerHTML='';
+   if(!received.length)incoming.textContent='No tienes solicitudes pendientes.';
+   for(const r of received){const name=await profileName(r.solicitante);const row=document.createElement('div');row.className='wordcard';const title=document.createElement('strong');title.textContent=name;row.append(title);const yes=document.createElement('button');yes.textContent='Aceptar';yes.onclick=()=>changeFriendRequest(r.id,'aceptada');const no=document.createElement('button');no.className='secondary';no.textContent='Rechazar';no.onclick=()=>deleteFriendRequest(r.id);row.append(yes,no);incoming.append(row);}
+   if(!sent.length)outgoing.textContent='No has enviado solicitudes pendientes.';
+   for(const r of sent){const name=await profileName(r.destinatario);const row=document.createElement('div');row.className='wordcard';row.textContent=name+' · Pendiente';outgoing.append(row);}
+   if(!accepted.length)list.textContent='Todavía no tienes amigos. ¡Busca a alguien!';
+   for(const r of accepted){const other=r.solicitante===authUser.id?r.destinatario:r.solicitante;const name=await profileName(other);const row=document.createElement('div');row.className='wordcard';row.textContent='🤝 '+name;list.append(row);}
+  }catch(e){incoming.textContent='No se pudieron cargar las amistades: '+e.message;}
+ }
+ async function changeFriendRequest(id,status){
+  try{await api('/api/collections/amistades/records/'+encodeURIComponent(id),{method:'PATCH',body:JSON.stringify({estado:status})});await renderFriends();}
+  catch(e){alert('No se pudo actualizar la solicitud: '+e.message);}
+ }
+ async function deleteFriendRequest(id){
+  try{await api('/api/collections/amistades/records/'+encodeURIComponent(id),{method:'DELETE'});await renderFriends();}
+  catch(e){alert('No se pudo rechazar la solicitud: '+e.message);}
+ }
+ async function searchFriend(){
+  const box=document.getElementById('friendSearchResults');const term=document.getElementById('friendSearch').value.trim();
+  if(!term){box.textContent='Escribe el nombre de usuario que quieres buscar.';return;}
+  if(term.toLowerCase()===String(authUser.username||activeStudentName).toLowerCase()){box.textContent='Ese es tu propio usuario.';return;}
+  box.textContent='Buscando…';
+  try{
+   const filter=encodeURIComponent('username = "'+term.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"');
+   const r=await api('/api/collections/perfiles/records?filter='+filter+'&perPage=5');
+   const found=(r.items||[]).filter(x=>x.usuario!==authUser.id);
+   box.innerHTML='';
+   if(!found.length){box.textContent='No se ha encontrado ningún alumno con ese nombre.';return;}
+   for(const p of found){const row=document.createElement('div');row.className='wordcard';const name=document.createElement('strong');name.textContent=p.username;const btn=document.createElement('button');btn.textContent='Enviar solicitud';btn.onclick=()=>sendFriendRequest(p.usuario,btn);row.append(name,btn);box.append(row);}
+  }catch(e){box.textContent='No se pudo buscar: '+e.message;}
+ }
+ async function sendFriendRequest(targetId,button){
+  button.disabled=true;
+  try{
+   const records=await friendRecords();
+   const exists=records.some(r=>r.estado==='aceptada'||(r.estado==='pendiente'&&((r.solicitante===authUser.id&&r.destinatario===targetId)||(r.solicitante===targetId&&r.destinatario===authUser.id))));
+   if(exists){button.textContent='Ya existe una solicitud o amistad';return;}
+   await api('/api/collections/amistades/records',{method:'POST',body:JSON.stringify({solicitante:authUser.id,destinatario:targetId,estado:'pendiente'})});
+   button.textContent='Solicitud enviada';await renderFriends();
+  }catch(e){button.disabled=false;button.textContent='Enviar solicitud';alert('No se pudo enviar la solicitud: '+e.message);}
+ }
+ window.draktharRenderFriends=renderFriends;
+ document.getElementById('friendSearchButton').addEventListener('click',searchFriend);
+ document.getElementById('friendSearch').addEventListener('keydown',e=>{if(e.key==='Enter')searchFriend();});
  async function activateAccount(record,token,name){
   authToken=token;authUser=record;activeStudentName=name;progressRecordId=null;
   SAVE_KEY=localSaveKey(name);
+  await ensurePublicProfile();
   const local=readLocalProgress(name);
   const remote=await fetchProgress(record.id);
   if(remote){progressRecordId=remote.id;unpackProgress(remote);}
@@ -570,6 +649,7 @@ renderConversations();
   if(typeof renderDiplomas==='function')renderDiplomas();
   if(typeof renderBadges==='function')renderBadges();
   renderProfile();
+  renderFriends();
   showMessage('Sesión iniciada. Tu progreso se sincroniza con tu cuenta.');
  }
  function logout(){
