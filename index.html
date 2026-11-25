@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Academia Drakthar 16.0 — Escuela de lenguas antiguas</title>
+<title>Academia Drakthar 16.2 — Diagnóstico de conexión</title>
 <style>
 
 :root{
@@ -523,7 +523,7 @@ renderConversations();
   if(authToken)headers.Authorization=authToken;
   const response=await fetch(API+path,{...options,headers});
   let data={};try{data=await response.json();}catch{}
-  if(!response.ok){const detail=data?.data?Object.entries(data.data).map(([k,v])=>k+': '+(v.message||'error')).join(' · '):'';throw new Error(detail||data.message||('Error HTTP '+response.status));}
+  if(!response.ok){const detail=data?.data?Object.entries(data.data).map(([k,v])=>k+': '+(v.message||'error')).join(' · '):'';const method=(options.method||'GET').toUpperCase();throw new Error('HTTP '+response.status+' en '+method+' '+path+' — '+(detail||data.message||'El servidor no encontró el recurso.'));}
   return data;
  };
  const localSaveKey=name=>'drakthar_progress_'+name;
