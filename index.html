@@ -164,6 +164,7 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
     <div class="home-grid">
       <button class="home-tile" data-target="perfil"><span class="tile-icon">👤</span><strong>Mi perfil</strong><span>Tu avatar, nivel y estadísticas.</span></button>
       <button class="home-tile" data-target="amigos"><span class="tile-icon">🤝</span><strong>Amigos</strong><span>Busca compañeros y envía solicitudes.</span></button>
+      <button class="home-tile" data-target="mensajes"><span class="tile-icon">💬</span><strong>Mensajes</strong><span>Habla en privado con tus amigos.</span></button>
       <button class="home-tile" data-target="progreso"><span class="tile-icon">⭐</span><strong>Mi progreso</strong><span>Consulta tus XP, rango y racha.</span></button>
       <button class="home-tile" data-target="lecciones"><span class="tile-icon">📖</span><strong>Lecciones</strong><span>Aprende con las 50 lecciones.</span></button>
       <button class="home-tile" data-target="conversaciones"><span class="tile-icon">🗣️</span><strong>Conversaciones</strong><span>Practica hablando con habitantes.</span></button>
@@ -186,6 +187,17 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
  <h3 style="color:var(--gold2);margin-top:26px">📨 Solicitudes recibidas</h3><div id="friendIncoming" class="small">Cargando…</div>
  <h3 style="color:var(--gold2);margin-top:26px">📤 Solicitudes enviadas</h3><div id="friendOutgoing" class="small">Cargando…</div>
  <h3 style="color:var(--gold2);margin-top:26px">⭐ Mis amigos</h3><div id="friendList" class="small">Cargando…</div>
+ </div></section>
+<section id="mensajes"><h2>💬 Mensajes privados</h2><div class="panel">
+ <p class="small">Solo puedes conversar con amigos que hayan aceptado tu solicitud. No compartas datos personales.</p>
+ <div id="chatFriends" class="small">Cargando amigos…</div>
+ <div id="chatArea" style="display:none;margin-top:18px">
+  <h3 id="chatTitle" style="color:var(--gold2)">Conversación</h3>
+  <div id="chatMessages" class="wordcard" style="max-height:320px;overflow:auto;min-height:100px;white-space:normal"></div>
+  <label for="chatText">Tu mensaje</label><textarea id="chatText" maxlength="1000" rows="3" placeholder="Escribe un mensaje…" style="width:100%;padding:12px;border-radius:10px"></textarea>
+  <button type="button" id="chatSend">Enviar</button><button type="button" id="chatRefresh" class="secondary">Actualizar</button>
+  <p id="chatStatus" class="small" aria-live="polite"></p>
+ </div>
  </div></section>
 <section id="perfil"><h2>👤 Perfil del estudiante</h2><div class="panel">
  <div class="profile-hero"><div class="profile-avatar" id="profileAvatar">🐉</div><div><div class="profile-name" id="profileName">Alumno de Drakthar</div><div class="profile-subtitle" id="profileRank">Rango: Novato · Miembro de la Academia</div></div></div>
@@ -587,7 +599,7 @@ renderConversations();
    if(!sent.length)outgoing.textContent='No has enviado solicitudes pendientes.';
    for(const r of sent){const name=await profileName(r.destinatario);const row=document.createElement('div');row.className='wordcard';row.textContent=name+' · Pendiente';outgoing.append(row);}
    if(!accepted.length)list.textContent='Todavía no tienes amigos. ¡Busca a alguien!';
-   for(const r of accepted){const other=r.solicitante===authUser.id?r.destinatario:r.solicitante;const name=await profileName(other);const row=document.createElement('div');row.className='wordcard';row.textContent='🤝 '+name;list.append(row);}
+   for(const r of accepted){const other=r.solicitante===authUser.id?r.destinatario:r.solicitante;const name=await profileName(other);const row=document.createElement('div');row.className='wordcard';const label=document.createElement('strong');label.textContent='🤝 '+name+' ';row.append(label);const chatBtn=document.createElement('button');chatBtn.type='button';chatBtn.textContent='💬 Abrir chat';chatBtn.addEventListener('click',()=>openChat(other,name));row.append(chatBtn);list.append(row);}
   }catch(e){incoming.textContent='No se pudieron cargar las amistades: '+e.message;}
  }
  async function changeFriendRequest(id,status){
@@ -650,6 +662,7 @@ renderConversations();
   if(typeof renderBadges==='function')renderBadges();
   renderProfile();
   renderFriends();
+  renderChatFriends();
   showMessage('Sesión iniciada. Tu progreso se sincroniza con tu cuenta.');
  }
  function logout(){
@@ -678,6 +691,48 @@ renderConversations();
    await activateAccount(auth.record,auth.token,name);
   }catch(e){showMessage('No se pudo iniciar sesión. Comprueba el usuario y la contraseña. '+e.message);}
  }
+ let activeChatUserId='';
+ async function openChat(userId,name){
+  activeChatUserId=userId;
+  document.getElementById('chatArea').style.display='block';
+  document.getElementById('chatTitle').textContent='Chat con '+name;
+  document.getElementById('chatStatus').textContent='';
+  await loadChat();
+ }
+ async function loadChat(){
+  if(!activeChatUserId||!authUser)return;
+  const box=document.getElementById('chatMessages');box.textContent='Cargando mensajes…';
+  try{
+   const filter=encodeURIComponent('(remitente = "'+authUser.id+'" && destinatario = "'+activeChatUserId+'") || (remitente = "'+activeChatUserId+'" && destinatario = "'+authUser.id+'")');
+   const result=await api('/api/collections/mensajes/records?filter='+filter+'&perPage=200&sort=created');
+   box.innerHTML='';
+   if(!result.items?.length){box.textContent='Todavía no hay mensajes. ¡Escribe el primero!';return;}
+   for(const m of result.items){const line=document.createElement('p');line.style.padding='8px';line.style.borderBottom='1px solid #555';const who=document.createElement('strong');who.textContent=m.remitente===authUser.id?'Tú: ':'Amigo: ';const body=document.createElement('span');body.textContent=m.texto||'';line.append(who,body);box.append(line);}
+   box.scrollTop=box.scrollHeight;
+  }catch(e){box.textContent='No se pudieron cargar los mensajes: '+e.message;}
+ }
+ async function sendChatMessage(){
+  const input=document.getElementById('chatText'),status=document.getElementById('chatStatus'),value=input.value.trim();
+  if(!activeChatUserId||!value)return;
+  status.textContent='Enviando…';
+  try{
+   await api('/api/collections/mensajes/records',{method:'POST',body:JSON.stringify({remitente:authUser.id,destinatario:activeChatUserId,texto:value,leido:false})});
+   input.value='';status.textContent='Mensaje enviado.';await loadChat();
+  }catch(e){status.textContent='No se pudo enviar: '+e.message+'. Comprueba que seguís siendo amigos y que ninguno ha bloqueado al otro.';}
+ }
+ async function renderChatFriends(){
+  const box=document.getElementById('chatFriends');if(!authUser||!authToken){box.textContent='Inicia sesión para ver tus chats.';return;}
+  try{const records=await friendRecords();const accepted=records.filter(r=>r.estado==='aceptada');box.innerHTML='';if(!accepted.length){box.textContent='Aún no tienes amigos aceptados.';return;}
+   for(const r of accepted){const other=r.solicitante===authUser.id?r.destinatario:r.solicitante;const name=await profileName(other);const row=document.createElement('div');row.className='wordcard';const label=document.createElement('span');label.textContent='🤝 '+name+' ';const b=document.createElement('button');b.textContent='Abrir conversación';b.addEventListener('click',()=>openChat(other,name));row.append(label,b);box.append(row);}
+  }catch(e){box.textContent='Error al cargar amigos: '+e.message;}
+ }
+ document.getElementById('chatSend').addEventListener('click',sendChatMessage);
+ document.getElementById('chatRefresh').addEventListener('click',loadChat);
+ document.getElementById('chatText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMessage();}});
+ const originalActivateAccount=activateAccount;
+ // Al entrar en la sala de mensajes, actualiza la lista de amigos.
+ const chatTile=document.querySelector('[data-target="mensajes"]');
+ chatTile?.addEventListener('click',()=>renderChatFriends());
  document.getElementById('accountRegister').addEventListener('click',register);
  document.getElementById('accountLogin').addEventListener('click',login);
  passwordEl.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
