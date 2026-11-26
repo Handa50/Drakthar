@@ -524,7 +524,7 @@ renderConversations();
   if(authToken)headers.Authorization=authToken;
   const response=await fetch(API+path,{...options,headers});
   let data={};try{data=await response.json();}catch{}
-  if(!response.ok){const detail=data?.data?Object.entries(data.data).map(([k,v])=>k+': '+(v.message||'error')).join(' · '):'';const method=(options.method||'GET').toUpperCase();throw new Error('HTTP '+response.status+' en '+method+' '+path+' — '+(detail||data.message||'El servidor no encontró el recurso.'));}
+  if(!response.ok){const detail=data?.data?Object.entries(data.data).map(([k,v])=>k+': '+(v.message||JSON.stringify(v))).join(' · '):'';const method=(options.method||'GET').toUpperCase();const raw=JSON.stringify(data);throw new Error('HTTP '+response.status+' en '+method+' '+path+' — '+(detail||data.message||'Error del servidor')+(raw&&raw!=='{}'?' | Respuesta: '+raw:''));}
   return data;
  };
  const localSaveKey=name=>'drakthar_progress_'+name;
