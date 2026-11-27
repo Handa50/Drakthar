@@ -588,12 +588,40 @@ renderConversations();
   saveTimer=setTimeout(uploadProgress,700);
  }
  window.draktharCloudSave=queueCloudSave;
- async function apiFile(path,formData,method='POST'){
-  const headers={};if(authToken)headers.Authorization=authToken;
-  const response=await fetch(API+path,{method,headers,body:formData});let data={};try{data=await response.json();}catch{}
-  if(!response.ok)throw new Error(data.message||'No se pudo subir la imagen (HTTP '+response.status+').');return data;
- }
- async function profileFor(userId){
+async function apiFile(path,formData,method='POST'){
+  const headers={};
+  if(authToken) headers.Authorization=authToken;
+
+  const response=await fetch(API+path,{
+    method,
+    headers,
+    body:formData
+  });
+
+  let data={};
+  try{
+    data=await response.json();
+  }catch{}
+
+  if(!response.ok){
+    console.error('Error de PocketBase al enviar audio:',{
+      status:response.status,
+      respuesta:data
+    });
+
+    const detalles=data.data
+      ? Object.entries(data.data).map(([campo,error])=>campo+': '+(error.message||'error')).join(' | ')
+      : '';
+
+    throw new Error(
+      'HTTP '+response.status+': '+(data.message||'Error de PocketBase')+
+      (detalles?' — '+detalles:'')
+    );
+  }
+
+  return data;
+  }
+  async function profileFor(userId){
   const filter=encodeURIComponent('usuario = "'+userId+'"');
   const r=await api('/api/collections/perfiles/records?filter='+filter+'&perPage=1');
   return r.items?.[0]||null;
