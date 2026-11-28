@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
     <link rel="icon" href="favicon.ico" sizes="any">
     <link rel="icon" type="image/png" href="favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Academia Drakthar 16.3 — Fotos en mensajes</title>
+<title>Academia Drakthar — Fotos en mensajes</title>
 <style>
 
 :root{
@@ -198,7 +198,8 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
 </style>
 </head><body class="auth-locked">
 <div id="accountGate" role="dialog" aria-modal="true" aria-labelledby="accountTitle"><div class="account-card"><h2 id="accountTitle">🐉 Academia Drakthar</h2><p>Entra en tu cuenta o crea una nueva para guardar tu progreso y continuar desde otros dispositivos.</p><label for="accountUsername">Nombre de usuario</label><input id="accountUsername" autocomplete="username" maxlength="20" placeholder="Tu nombre de alumno"><label for="accountPassword">Contraseña</label><input id="accountPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Mínimo 8 caracteres"><div class="account-actions"><button type="button" id="accountLogin">Iniciar sesión</button><button type="button" id="accountRegister">Crear cuenta</button></div><div id="accountMessage" aria-live="polite"></div><p class="account-note">Tu cuenta y tu progreso se guardan en el servidor de la Academia. No compartas tu contraseña. No uses una contraseña que utilices en otros sitios. No es un sistema de seguridad para datos sensibles.</p></div></div><header><div class="rune">ᚦ · ᚨ · ᚱ · ᚨ · ᚲ</div><h1>ACADEMIA DRAKTHAR</h1><p>Escuela de lenguas antiguas y artes olvidadas. Aprende el idioma de los dragones, descifra runas y supera los desafíos de la academia.</p></header>
-<nav><a href="#inicio" id="homeNav">⌂ Inicio de la Academia</a></nav>
+<nav style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap"><a href="#inicio" id="homeNav">⌂ Inicio de la Academia</a><button type="button" id="notificationBell" class="secondary" style="margin:0" aria-expanded="false">🔔 Notificaciones <span id="notificationCount" style="display:inline-block;min-width:20px;border-radius:12px;background:#b83232;color:white;padding:2px 6px;font-size:.78rem">0</span></button></nav>
+<div id="notificationPanel" class="panel" hidden style="max-width:900px;margin:12px auto;padding:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="margin:0;color:var(--gold2)">🔔 Tus notificaciones</h3><button type="button" id="markNotificationsRead" class="secondary" style="margin:0">Marcar todas como leídas</button></div><div id="notificationList" class="small" style="margin-top:12px">Inicia sesión para ver tus notificaciones.</div></div>
 <main id="academyMain" class="academy-home-mode">
 <section id="academyHome">
   <h2>🐉 Bienvenido a la Academia Drakthar</h2>
@@ -386,7 +387,7 @@ function registerStudy(){const today=todayKey();if(save.lastDay!==today){save.st
 function addXP(n){save.xp+=n;registerStudy();if(save.xp>=100)unlockBadge('centenario');saveGame();}
 const ranks=[{name:'Novato',min:0},{name:'Aprendiz',min:50},{name:'Explorador',min:150},{name:'Guerrero',min:300},{name:'Maestro',min:500},{name:'Leyenda',min:800}];
 const badgeInfo=[['primera','📖','Primera lección','Completa tu primer reto.'],['centenario','💯','Centenario','Alcanza 100 XP.'],['examen','🎓','Primer diploma','Aprueba tu primer examen.'],['racha3','🔥','Constancia','Estudia 3 días seguidos.'],['leyenda','👑','Leyenda','Supera los 20 exámenes de la Academia.']];
-function unlockBadge(id){if(!save.badges.includes(id)){save.badges.push(id);playAcademySound('badge');}}
+function unlockBadge(id){if(!save.badges.includes(id)){save.badges.push(id);playAcademySound('badge');if(window.draktharCreateNotification)window.draktharCreateNotification('logro','¡Has conseguido un nuevo logro: '+(badgeInfo.find(b=>b[0]===id)?.[2]||id)+'!','logros');}}
 
 const studentAvatars=['🐉','🐲','🦅','🐺','🦊','🦉','🦁','🐻'];
 function renderProfile(){
@@ -579,6 +580,25 @@ renderConversations();
   if(!response.ok){const detail=data?.data?Object.entries(data.data).map(([k,v])=>k+': '+(v.message||JSON.stringify(v))).join(' · '):'';const method=(options.method||'GET').toUpperCase();const raw=JSON.stringify(data);throw new Error('HTTP '+response.status+' en '+method+' '+path+' — '+(detail||data.message||'Error del servidor')+(raw&&raw!=='{}'?' | Respuesta: '+raw:''));}
   return data;
  };
+ let notificationTimer=null;
+ let notificationRecords=[];
+ const notificationPanel=document.getElementById('notificationPanel');
+ const notificationList=document.getElementById('notificationList');
+ const notificationCount=document.getElementById('notificationCount');
+ function renderNotifications(){
+  const unread=notificationRecords.filter(n=>!n.leido).length;
+  notificationCount.textContent=String(unread);
+  notificationCount.style.display=unread?'inline-block':'none';
+  notificationList.innerHTML='';
+  if(!notificationRecords.length){notificationList.textContent='Todavía no tienes notificaciones.';return;}
+  notificationRecords.forEach(n=>{const row=document.createElement('div');row.style.cssText='padding:11px 8px;border-top:1px solid #ffffff20;display:flex;gap:10px;align-items:flex-start';const mark=document.createElement('span');mark.textContent=n.leido?'⚪':'🔵';const body=document.createElement('div');body.style.flex='1';const title=document.createElement('strong');title.textContent=n.texto||'Nueva notificación';const meta=document.createElement('div');meta.className='small';meta.textContent=(n.tipo==='logro'?'🏅 Logro':n.tipo==='amistad'?'🤝 Amistad':n.tipo==='mensaje'?'💬 Mensaje':'📢 Aviso')+(n.created?' · '+new Date(n.created).toLocaleString('es-ES'): '');body.append(title,meta);row.append(mark,body);if(!n.leido){const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='Leer';b.style.cssText='margin:0;padding:6px 9px';b.addEventListener('click',()=>markNotificationRead(n.id));row.append(b);}notificationList.append(row);});
+ }
+ async function loadNotifications(){if(!authToken||!authUser)return;try{const f=encodeURIComponent('usuario = "'+authUser.id+'"');const r=await api('/api/collections/notificaciones/records?filter='+f+'&sort=-created&perPage=50');notificationRecords=r.items||[];renderNotifications();}catch(e){notificationList.textContent='No se pudieron cargar las notificaciones. Comprueba los permisos de la colección notificaciones.';console.warn(e);}}
+ async function markNotificationRead(id){try{await api('/api/collections/notificaciones/records/'+encodeURIComponent(id),{method:'PATCH',body:JSON.stringify({leido:true})});const item=notificationRecords.find(n=>n.id===id);if(item)item.leido=true;renderNotifications();}catch(e){alert('No se pudo marcar como leída: '+e.message);}}
+ async function createNotification(tipo,texto,enlace=''){if(!authToken||!authUser)return;try{await api('/api/collections/notificaciones/records',{method:'POST',body:JSON.stringify({usuario:authUser.id,tipo,texto,leido:false,enlace})});await loadNotifications();}catch(e){console.warn('No se pudo guardar la notificación:',e);}}
+ window.draktharCreateNotification=createNotification;
+ document.getElementById('notificationBell').addEventListener('click',async()=>{const open=notificationPanel.hidden;notificationPanel.hidden=!open;document.getElementById('notificationBell').setAttribute('aria-expanded',String(open));if(open)await loadNotifications();});
+ document.getElementById('markNotificationsRead').addEventListener('click',async()=>{for(const n of notificationRecords.filter(x=>!x.leido)){try{await api('/api/collections/notificaciones/records/'+encodeURIComponent(n.id),{method:'PATCH',body:JSON.stringify({leido:true})});n.leido=true;}catch(e){console.warn(e);}}renderNotifications();});
  const localSaveKey=name=>'drakthar_progress_'+name;
  function readLocalProgress(name){
   try{return JSON.parse(localStorage.getItem(localSaveKey(name))||'{}');}catch{return {};}
@@ -767,6 +787,8 @@ renderConversations();
   await ensurePublicProfile();
   try{const ownProfile=await profileFor(record.id);window.profileAvatarUrl=profilePhotoUrl(ownProfile);}catch{window.profileAvatarUrl='';}
   startPresence();
+  await loadNotifications();
+  clearInterval(notificationTimer);notificationTimer=setInterval(loadNotifications,30000);
   const local=readLocalProgress(name);
   const remote=await fetchProgress(record.id);
   if(remote){progressRecordId=remote.id;unpackProgress(remote);}
@@ -792,7 +814,7 @@ renderConversations();
   showMessage('Sesión iniciada. Tu progreso se sincroniza con tu cuenta.');
  }
  function logout(){
-  stopPresence();clearTimeout(saveTimer);authToken='';window.profileAvatarUrl='';authUser=null;progressRecordId=null;
+  stopPresence();clearTimeout(saveTimer);clearInterval(notificationTimer);notificationRecords=[];renderNotifications();authToken='';window.profileAvatarUrl='';authUser=null;progressRecordId=null;
   document.getElementById('accountBadge')?.remove();
   document.body.classList.add('auth-locked');gate.style.display='flex';passwordEl.value='';showMessage('Has cerrado sesión.');
  }
