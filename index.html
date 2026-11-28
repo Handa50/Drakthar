@@ -169,13 +169,23 @@ body.auth-locked #accountGate{display:flex}.account-card{width:min(440px,100%);p
 .presence-off{background:#87909c}.typing-note{color:#8de6b0;font-size:.86rem;min-height:1.3em;padding:4px 10px}
 .group-admin-tools{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.profile-upload{margin:12px 0}
 
-/* DRAKTHAR: corrección del chat al maximizar la ventana en ordenador */
+/* DRAKTHAR: arreglo de altura y desplazamiento del chat en escritorio */
 @media (min-width:681px){
-  .wa-shell{height:clamp(480px, calc(100vh - 260px), 820px);min-height:480px;}
-  .wa-conversation{min-height:0;overflow:hidden;}
-  #chatActive{height:100%;min-height:0;flex:1 1 0%;}
+  .wa-shell{
+    display:grid;
+    grid-template-columns:minmax(230px,34%) minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr);
+    height: min(760px, calc(100vh - 220px));
+    min-height:420px;
+    max-height:calc(100vh - 120px);
+    overflow:hidden;
+  }
+  .wa-sidebar,.wa-conversation{min-width:0;min-height:0;height:100%;overflow:hidden;}
+  .wa-sidebar{display:flex;flex-direction:column;}
+  .wa-chat-list{flex:1 1 0;min-height:0;max-height:none;overflow-y:auto;}
+  #chatActive{display:flex!important;flex:1 1 0;min-width:0;min-height:0;height:100%;overflow:hidden;}
   .wa-chat-head,.group-admin-tools,#typingIndicator,.wa-compose,.wa-status{flex:0 0 auto;}
-  #chatMessages,.wa-messages{flex:1 1 0%;min-height:0;overflow-y:auto;}
+  #chatMessages,.wa-messages{flex:1 1 0;min-width:0;min-height:0;height:0;overflow-y:auto;overscroll-behavior:contain;}
   .wa-compose{display:flex!important;visibility:visible;position:relative;z-index:3;}
   .wa-compose textarea{flex:1 1 auto;min-width:0;}
 }
