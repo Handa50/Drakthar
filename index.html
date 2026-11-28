@@ -373,6 +373,17 @@ const diplomaTiers=[{id:'bronze',name:'Diploma de Bronce',icon:'🥉',needed:5},
 function renderDiplomas(){const root=document.getElementById('diplomaCards');if(!root)return;const input=document.getElementById('studentName');if(input&&document.activeElement!==input)input.value=save.diplomaName||'';root.innerHTML=diplomaTiers.map(d=>{const earned=save.passed.length>=d.needed;return `<div class="diploma-card ${earned?'':'locked'}"><h3>${d.icon} ${d.name}</h3><p>${earned?'¡Conseguido!':`Necesitas superar ${d.needed} exámenes (${Math.max(0,d.needed-save.passed.length)} más).`}</p><button ${earned?'':'disabled'} onclick="printDiploma('${d.id}')">${earned?'📜 Ver e imprimir':'🔒 Bloqueado'}</button></div>`}).join('');}
 document.getElementById('studentName').addEventListener('input',e=>{save.diplomaName=e.target.value;localStorage.setItem(SAVE_KEY,JSON.stringify(save));if(window.draktharCloudSave)window.draktharCloudSave();});
 window.printDiploma=function(id){const d=diplomaTiers.find(x=>x.id===id);if(!d||save.passed.length<d.needed)return;const name=(save.diplomaName||'Alumno de la Academia').replace(/[<>]/g,'');const win=window.open('','_blank');if(!win){alert('Permite las ventanas emergentes para imprimir el diploma.');return;}win.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${d.name}</title><style>body{margin:0;background:#f4ead2;font-family:Georgia,serif;color:#392914}.paper{margin:35px auto;padding:55px 35px;max-width:850px;min-height:480px;border:12px double #98713b;text-align:center;background:#fffaf0}.icon{font-size:64px}h1{font-size:42px;color:#76501f}h2{font-size:30px;margin:35px}p{font-size:20px;line-height:1.7}.name{font-size:34px;font-weight:bold;border-bottom:1px solid #98713b;display:inline-block;padding:8px 40px}.seal{margin-top:45px;font-size:18px}@media print{button{display:none}.paper{margin:0;max-width:none;min-height:90vh}}.level-card button{width:100%}.exam-box h3{color:var(--gold2)}
+
+/* DRAKTHAR: corrección del chat al maximizar la ventana en ordenador */
+@media (min-width:681px){
+  .wa-shell{height:clamp(480px, calc(100vh - 260px), 820px);min-height:480px;}
+  .wa-conversation{min-height:0;overflow:hidden;}
+  #chatActive{height:100%;min-height:0;flex:1 1 0%;}
+  .wa-chat-head,.group-admin-tools,#typingIndicator,.wa-compose,.wa-status{flex:0 0 auto;}
+  #chatMessages,.wa-messages{flex:1 1 0%;min-height:0;overflow-y:auto;}
+  .wa-compose{display:flex!important;visibility:visible;position:relative;z-index:3;}
+  .wa-compose textarea{flex:1 1 auto;min-width:0;}
+}
 </style>
 </head><body class="auth-locked"><div class="paper"><div class="icon">${d.icon} 🐉</div><h1>ACADEMIA DRAKTHAR</h1><h2>${d.name}</h2><p>Se concede este diploma a</p><div class="name">${name}</div><p>por haber superado ${d.needed} exámenes y demostrar dedicación<br>en el aprendizaje de la lengua Drakthar.</p><div class="seal">✦ Escuela de lenguas antiguas y artes olvidadas ✦<br>Fecha: ${new Date().toLocaleDateString('es-ES')}</div><button onclick="window.print()">Imprimir diploma</button></div></body></html>`);win.document.close();};
 let currentExam=-1,examQuestion=0,examScore=0,examAnswered=false;
@@ -588,40 +599,12 @@ renderConversations();
   saveTimer=setTimeout(uploadProgress,700);
  }
  window.draktharCloudSave=queueCloudSave;
-async function apiFile(path,formData,method='POST'){
-  const headers={};
-  if(authToken) headers.Authorization=authToken;
-
-  const response=await fetch(API+path,{
-    method,
-    headers,
-    body:formData
-  });
-
-  let data={};
-  try{
-    data=await response.json();
-  }catch{}
-
-  if(!response.ok){
-    console.error('Error de PocketBase al enviar audio:',{
-      status:response.status,
-      respuesta:data
-    });
-
-    const detalles=data.data
-      ? Object.entries(data.data).map(([campo,error])=>campo+': '+(error.message||'error')).join(' | ')
-      : '';
-
-    throw new Error(
-      'HTTP '+response.status+': '+(data.message||'Error de PocketBase')+
-      (detalles?' — '+detalles:'')
-    );
-  }
-
-  return data;
-  }
-  async function profileFor(userId){
+ async function apiFile(path,formData,method='POST'){
+  const headers={};if(authToken)headers.Authorization=authToken;
+  const response=await fetch(API+path,{method,headers,body:formData});let data={};try{data=await response.json();}catch{}
+  if(!response.ok)throw new Error(data.message||'No se pudo subir la imagen (HTTP '+response.status+').');return data;
+ }
+ async function profileFor(userId){
   const filter=encodeURIComponent('usuario = "'+userId+'"');
   const r=await api('/api/collections/perfiles/records?filter='+filter+'&perPage=1');
   return r.items?.[0]||null;
